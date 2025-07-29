@@ -1,0 +1,174 @@
+<section id="portfolioPanel" class="pt-8">
+  <div class="mx-auto px-12 max-w-6xl">
+    <div class="flex justify-between items-center mb-8">
+      <h2 class="text-3xl font-bold text-gray-800">Portfolio</h2>
+      <button class="flex items-center px-5 py-2.5 rounded-xl bg-blue-100 text-blue-700 font-medium">
+        <iconify-icon icon="mdi:file-export-outline" class="mr-2"></iconify-icon>
+        Export Report
+      </button>
+    </div>
+
+    <!-- 持仓名称列表 -->
+    <div class="flex gap-4 mb-6 overflow-x-auto py-2">
+      <button class="px-5 py-2.5 rounded-xl bg-blue-600 text-white font-medium portfolio-btn active"
+        data-portfolio="portfolio1">US Stocks</button>
+      <button class="px-5 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-medium portfolio-btn"
+        data-portfolio="portfolio2">Hong Kong Stocks</button>
+      <button class="px-5 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-medium portfolio-btn"
+        data-portfolio="portfolio3">China A-Shares</button>
+      <button class="px-5 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-medium portfolio-btn"
+        data-portfolio="portfolio4">Cryptocurrencies</button>
+    </div>
+
+    <div class="grid grid-cols-3 gap-6 mb-8">
+      <!-- Performance Summary -->
+      <div class="glass-nav rounded-xl p-6">
+        <h3 class="font-medium text-gray-700 mb-3">Total Value</h3>
+        <p class="text-2xl font-bold text-gray-900">$126,842.50</p>
+      </div>
+
+      <!-- Today's Change -->
+      <div class="glass-nav rounded-xl p-6">
+        <h3 class="font-medium text-gray-700 mb-3">Today's Change</h3>
+        <div class="flex items-center">
+          <iconify-icon icon="mdi:trending-up" class="text-xl text-green-500 mr-1"></iconify-icon>
+          <p class="text-2xl font-bold text-gray-900">+$1,842.50</p>
+        </div>
+      </div>
+
+      <!-- Performance Percentage -->
+      <div class="glass-nav rounded-xl p-6">
+        <h3 class="font-medium text-gray-700 mb-3">All Time Return</h3>
+        <div class="flex items-center">
+          <iconify-icon icon="mdi:arrow-top-right-thick" class="text-xl text-green-500 mr-1"></iconify-icon>
+          <p class="text-2xl font-bold text-gray-900">+24.3%</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Portfolio Holdings -->
+    <div class="glass-nav rounded-xl p-6">
+      <h3 class="text-xl font-bold text-gray-800 mb-6">Current Holdings - <span id="currentPortfolioName">US
+          Stocks</span></h3>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-gray-100">
+              <th class="text-left py-3 font-bold text-gray-700">Asset</th>
+              <th class="text-right py-3 font-bold text-gray-700">Quantity</th>
+              <th class="text-right py-3 font-bold text-gray-700">Average Cost</th>
+              <th class="text-right py-3 font-bold text-gray-700">Current Price</th>
+              <th class="text-right py-3 font-bold text-gray-700">Market Value</th>
+              <th class="text-right py-3 font-bold text-gray-700">Daily Change</th>
+              <th class="text-right py-3 font-bold text-gray-700">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Holding Row 1 -->
+            <tr class="border-b border-gray-100">
+              <td class="py-4">
+                <div class="flex items-center">
+                  <img src="https://modao.cc/ai/uploads/ai_pics/6/66429/aigp_1753747625.jpeg"
+                    alt="Apple Inc. company logo" id="holding-logo1" class="w-10 h-10 rounded mr-3">
+                  <div>
+                    <p class="font-semibold text-gray-800">Apple Inc.</p>
+                    <p class="text-sm text-gray-500">AAPL</p>
+                  </div>
+                </div>
+              </td>
+              <td class="text-right align-middle py-4 font-medium">85</td>
+              <td class="text-right align-middle py-4 font-medium">$142.31</td>
+              <td class="text-right align-middle py-4 font-bold">$175.42</td>
+              <td class="text-right align-middle py-4 font-bold">$14,910.70</td>
+              <td class="text-right align-middle py-4 font-medium positive-change">+2.35%</td>
+              <td class="text-right align-middle py-4">
+                <button class="px-3 py-1 bg-red-500 text-white rounded-md" onclick="showSellModal('AAPL', 175.42)">
+                  Sell
+                </button>
+              </td>
+            </tr>
+
+            <!-- Holding Row 2 -->
+            <tr class="border-b border-gray-100">
+              <td class="py-4">
+                <div class="flex items-center">
+                  <img src="https://modao.cc/ai/uploads/ai_pics/6/66430/aigp_1753747627.jpeg"
+                    alt="Microsoft Corp. company logo" id="holding-logo2" class="w-10 h-10 rounded mr-3">
+                  <div>
+                    <p class="font-semibold text-gray-800">Microsoft Corp.</p>
+                    <p class="text-sm text-gray-500">MSFT</p>
+                  </div>
+                </div>
+              </td>
+              <td class="text-right align-middle py-4 font-medium">42</td>
+              <td class="text-right align-middle py-4 font-medium">$318.75</td>
+              <td class="text-right align-middle py-4 font-bold">$336.21</td>
+              <td class="text-right align-middle py-4 font-bold">$14,120.82</td>
+              <td class="text-right align-middle py-4 font-medium positive-change">+1.64%</td>
+              <td class="text-right align-middle py-4">
+                <button class="px-3 py-1 bg-red-500 text-white rounded-md" onclick="showSellModal('MSFT', 336.21)">
+                  Sell
+                </button>
+              </td>
+            </tr>
+
+            <!-- Holding Row 3 -->
+            <tr class="border-b border-gray-100">
+              <td class="py-4">
+                <div class="flex items-center">
+                  <img src="https://modao.cc/ai/uploads/ai_pics/6/66431/aigp_1753747629.jpeg"
+                    alt="Amazon.com Inc. company logo" id="holding-logo3" class="w-10 h-10 rounded mr-3">
+                  <div>
+                    <p class="font-semibold text-gray-800">Amazon.com Inc.</p>
+                    <p class="text-sm text-gray-500">AMZN</p>
+                  </div>
+                </div>
+              </td>
+              <td class="text-right align-middle py-4 font-medium">64</td>
+              <td class="text-right align-middle py-4 font-medium">$135.20</td>
+              <td class="text-right align-middle py-4 font-bold">$132.75</td>
+              <td class="text-right align-middle py-4 font-bold">$8,496.00</td>
+              <td class="text-right align-middle py-4 font-medium negative-change">-0.87%</td>
+              <td class="text-right align-middle py-4">
+                <button class="px-3 py-1 bg-red-500 text-white rounded-md" onclick="showSellModal('AMZN', 132.75)">
+                  Sell
+                </button>
+              </td>
+            </tr>
+
+            <!-- Holding Row 4 -->
+            <tr>
+              <td class="py-4">
+                <div class="flex items-center">
+                  <img src="https://modao.cc/ai/uploads/ai_pics/6/66432/aigp_1753747631.jpeg"
+                    alt="S&amp;P 500 ETF Trust logo" id="holding-logo4" class="w-10 h-10 rounded mr-3">
+                  <div>
+                    <p class="font-semibold text-gray-800">SPDR S&amp;P 500 ETF</p>
+                    <p class="text-sm text-gray-500">SPY</p>
+                  </div>
+                </div>
+              </td>
+              <td class="text-right align-middle py-4 font-medium">120</td>
+              <td class="text-right align-middle py-4 font-medium">$421.80</td>
+              <td class="text-right align-middle py-4 font-bold">$458.37</td>
+              <td class="text-right align-middle py-4 font-bold">$55,004.40</td>
+              <td class="text-right align-middle py-4 font-medium positive-change">+0.92%</td>
+              <td class="text-right align-middle py-4">
+                <button class="px-3 py-1 bg-red-500 text-white rounded-md" onclick="showSellModal('SPY', 458.37)">
+                  Sell
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="flex justify-center mt-8">
+        <button class="flex items-center px-5 py-2.5 rounded-xl border border-blue-500 text-blue-700 font-medium"
+          onclick="showAddPositionModal()">
+          <iconify-icon icon="mdi:plus" class="mr-2"></iconify-icon>
+          Add New Position
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

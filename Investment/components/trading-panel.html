@@ -1,0 +1,240 @@
+<section id="tradingPanel" class="pt-8">
+  <!-- Top Bar with Search -->
+  <div class="mx-auto px-12 max-w-6xl">
+    <div class="relative mb-10">
+      <div class="flex">
+        <iconify-icon icon="mdi:search" class="absolute left-4 top-4 text-2xl text-gray-400"></iconify-icon>
+        <input type="text" placeholder="Search stocks by name or symbol..."
+          class="w-full py-4 pl-12 pr-5 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none shadow-sm"
+          oninput="showSearchResults()">
+      </div>
+      <div id="searchResults" class="search-results mt-2 p-3"></div>
+    </div>
+
+    <h2 class="text-3xl font-bold text-gray-800 mb-8">Stocks Market Overview</h2>
+
+    <!-- Stock Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Stock Card 1 -->
+      <div class="stock-card p-6 cursor-pointer" onclick="showStockDetail('AAPL')">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <h3 class="font-bold text-xl text-gray-800">Apple Inc.</h3>
+            <p class="text-gray-500">AAPL</p>
+          </div>
+          <img src="https://modao.cc/ai/uploads/ai_pics/6/66423/aigp_1753747615.jpeg" alt="Apple Inc. company logo"
+            id="stock-logo1" class="w-12 h-12">
+        </div>
+
+        <div class="mb-6">
+          <p class="text-2xl font-bold text-gray-900">$175.42</p>
+          <div class="flex items-center positive-change">
+            <iconify-icon icon="mdi:trending-up" class="mr-1"></iconify-icon>
+            <span>+2.35% ($4.03)</span>
+          </div>
+        </div>
+
+        <button class="buy-btn w-full text-white font-bold rounded-full py-3 flex items-center justify-center"
+          onclick="event.stopPropagation();showTradeModal('AAPL', 175.42)">
+          <iconify-icon icon="mdi:cart-arrow-down" class="mr-2"></iconify-icon>
+          Buy Stock
+        </button>
+      </div>
+
+      <!-- Stock Card 2 -->
+      <div class="stock-card p-6 cursor-pointer" onclick="showStockDetail('MSFT')">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <h3 class="font-bold text-xl text-gray-800">Microsoft Corp.</h3>
+            <p class="text-gray-500">MSFT</p>
+          </div>
+          <img src="https://modao.cc/ai/uploads/ai_pics/6/66424/aigp_1753747617.jpeg"
+            alt="Microsoft Corporation company logo" class="w-12 h-12">
+        </div>
+
+        <div class="mb-6">
+          <p class="text-2xl font-bold text-gray-900">$336.21</p>
+          <div class="flex items-center positive-change">
+            <iconify-icon icon="mdi:trending-up" class="mr-1"></iconify-icon>
+            <span>+1.64% ($5.42)</span>
+          </div>
+        </div>
+
+        <button class="buy-btn w-full text-white font-bold rounded-full py-3 flex items-center justify-center"
+          onclick=" event.stopPropagation();showTradeModal('MSFT', 336.21);">
+          <iconify-icon icon="mdi:cart-arrow-down" class="mr-2"></iconify-icon>
+          Buy Stock
+        </button>
+      </div>
+
+      <!-- Stock Card 3 -->
+      <div class="stock-card p-6 cursor-pointer" onclick="showStockDetail('AMZN')">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <h3 class="font-bold text-xl text-gray-800">Amazon.com Inc.</h3>
+            <p class="text-gray-500">AMZN</p>
+          </div>
+          <img src="https://modao.cc/ai/uploads/ai_pics/6/66425/aigp_1753747619.jpeg" alt="Amazon.com company logo"
+            class="w-12 h-12">
+        </div>
+
+        <div class="mb-6">
+          <p class="text-2xl font-bold text-gray-900">$132.75</p>
+          <div class="flex items-center negative-change">
+            <iconify-icon icon="mdi:trending-down" class="mr-1"></iconify-icon>
+            <span>-0.87% ($1.16)</span>
+          </div>
+        </div>
+
+        <button class="buy-btn w-full text-white font-bold rounded-full py-3 flex items-center justify-center"
+          onclick="event.stopPropagation();showTradeModal('AMZN', 132.75);">
+          <iconify-icon icon="mdi:cart-arrow-down" class="mr-2"></iconify-icon>
+          Buy Stock
+        </button>
+      </div>
+
+      <!-- Stock Card 4 -->
+      <div class="stock-card p-6 cursor-pointer" onclick="showStockDetail('TSLA')">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <h3 class="font-bold text-xl text-gray-800">Tesla Inc.</h3>
+            <p class="text-gray-500">TSLA</p>
+          </div>
+          <img src="https://modao.cc/ai/uploads/ai_pics/6/66426/aigp_1753747621.jpeg" alt="Tesla Inc. company logo"
+            class="w-12 h-12">
+        </div>
+
+        <div class="mb-6">
+          <p class="text-2xl font-bold text-gray-900">$258.93</p>
+          <div class="flex items-center negative-change">
+            <iconify-icon icon="mdi:trending-down" class="mr-1"></iconify-icon>
+            <span>-3.25% ($8.71)</span>
+          </div>
+        </div>
+
+        <button class="buy-btn w-full text-white font-bold rounded-full py-3 flex items-center justify-center"
+          onclick="event.stopPropagation();showTradeModal('TSLA', 258.93);">
+          <iconify-icon icon="mdi:cart-arrow-down" class="mr-2"></iconify-icon>
+          Buy Stock
+        </button>
+      </div>
+
+      <!-- Stock Card 5 -->
+      <div class="stock-card p-6 cursor-pointer" onclick="showStockDetail('GOOGL')">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <h3 class="font-bold text-xl text-gray-800">Google LLC</h3>
+            <p class="text-gray-500">GOOGL</p>
+          </div>
+          <img src="https://modao.cc/ai/uploads/ai_pics/6/66427/aigp_1753747622.jpeg" alt="Google LLC company logo"
+            class="w-12 h-12">
+        </div>
+
+        <div class="mb-6">
+          <p class="text-2xl font-bold text-gray-900">$138.04</p>
+          <div class="flex items-center positive-change">
+            <iconify-icon icon="mdi:trending-up" class="mr-1"></iconify-icon>
+            <span>+1.22% ($1.66)</span>
+          </div>
+        </div>
+
+        <button class="buy-btn w-full text-white font-bold rounded-full py-3 flex items-center justify-center"
+          onclick="event.stopPropagation();showTradeModal('GOOGL', 138.04);">
+          <iconify-icon icon="mdi:cart-arrow-down" class="mr-2"></iconify-icon>
+          Buy Stock
+        </button>
+      </div>
+
+      <!-- Stock Card 6 -->
+      <div class="stock-card p-6 cursor-pointer" onclick="showStockDetail('NFLX')">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <h3 class="font-bold text-xl text-gray-800">Netflix Inc.</h3>
+            <p class="text-gray-500">NFLX</p>
+          </div>
+          <img src="https://modao.cc/ai/uploads/ai_pics/6/66428/aigp_1753747623.jpeg" alt="Netflix Inc. company logo"
+            class="w-12 h-12">
+        </div>
+
+        <div class="mb-6">
+          <p class="text-2xl font-bold text-gray-900">$483.32</p>
+          <div class="flex items-center positive-change">
+            <iconify-icon icon="mdi:trending-up" class="mr-1"></iconify-icon>
+            <span>+4.63% ($21.36)</span>
+          </div>
+        </div>
+
+        <button class="buy-btn w-full text-white font-bold rounded-full py-3 flex items-center justify-center"
+          onclick="event.stopPropagation();showTradeModal('NFLX', 483.32);">
+          <iconify-icon icon="mdi:cart-arrow-down" class="mr-2"></iconify-icon>
+          Buy Stock
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trade Modal -->
+  <div id="tradeModal" class="modal-overlay">
+    <div class="flex items-center justify-center h-full">
+      <div class="modal-content p-8 w-11/12 max-w-md">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-bold text-gray-800">Buy Stock</h3>
+          <button onclick="closeTradeModal()">
+            <iconify-icon icon="mdi:close" class="text-2xl"></iconify-icon>
+          </button>
+        </div>
+        <div class="mb-6">
+          <label class="block text-gray-700 mb-2">Select Portfolio</label>
+          <div class="flex items-center gap-2">
+            <select id="trade-portfolio-select"
+              class="w-full p-3 border border-gray-300 rounded-lg font-medium"></select>
+            <button class="px-3 py-1 bg-blue-100 text-blue-700 rounded" onclick="showNewPortfolioModalFromTrade()"
+              type="button">
+              <iconify-icon icon="mdi:plus"></iconify-icon>
+            </button>
+          </div>
+        </div>
+        <div class="mb-6">
+          <label class="block text-gray-700 mb-2">Quantity</label>
+          <input id="trade-quantity-input" type="number" min="1" value="1"
+            class="w-full p-3 border border-gray-300 rounded-lg font-medium">
+        </div>
+        <div class="flex">
+          <button class="flex-1 mr-3 py-3 bg-gray-100 rounded-xl font-bold" onclick="closeTradeModal()">Cancel</button>
+          <button class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold flex items-center justify-center"
+            onclick="confirmTrade()">
+            <iconify-icon icon="mdi:cart-check" class="mr-2"></iconify-icon>Confirm Buy
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增Portfolio弹窗 -->
+  <div id="newPortfolioModalFromTrade" class="modal-overlay">
+    <div class="flex items-center justify-center h-full">
+      <div class="modal-content p-8 w-11/12 max-w-md">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-bold text-gray-800">Create New Portfolio</h3>
+          <button onclick="closeNewPortfolioModalFromTrade()">
+            <iconify-icon icon="mdi:close" class="text-2xl"></iconify-icon>
+          </button>
+        </div>
+        <div class="mb-6">
+          <label class="block text-gray-700 mb-2">Portfolio Name</label>
+          <input id="newPortfolioNameFromTrade" type="text" placeholder="Enter portfolio name"
+            class="w-full p-3 border border-gray-300 rounded-lg font-medium">
+        </div>
+        <div class="flex">
+          <button class="flex-1 mr-3 py-3 bg-gray-100 rounded-xl font-bold"
+            onclick="closeNewPortfolioModalFromTrade()">Cancel</button>
+          <button class="flex-1 py-3 bg-green-500 text-white rounded-xl font-bold flex items-center justify-center"
+            onclick="createNewPortfolioFromTrade()">
+            <iconify-icon icon="mdi:plus" class="mr-2"></iconify-icon>Create Portfolio
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
