@@ -20,6 +20,7 @@ WHERE data_date = (SELECT MAX(data_date)
                    
 				   
 #视图-投资组合资产市值表，展示用户各投资组合的市值
+CREATE VIEW portfolio_daily_value AS
 SELECT B.user_name,
 	   A.portfolio_name,
 	   data_date,
@@ -40,6 +41,7 @@ LEFT JOIN assets C
 ON A.asset_id = C.asset_id;
 
 #视图-用户投资组合表，返回各用户持有的投资组合
+CREATE VIEW user_portfolios AS
 SELECT DISTINCT A.user_id,
 	   A.user_name,
 	   B.portfolio_name
