@@ -179,7 +179,7 @@
         <!-- Stock Cards Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <!-- Stock Card 1 -->
-          <div class="stock-card p-6">
+          <div class="stock-card p-6 cursor-pointer" onclick="showStockDetail('AAPL')">
             <div class="flex justify-between items-start mb-4">
               <div>
                 <h3 class="font-bold text-xl text-gray-800">Apple Inc.</h3>
@@ -514,6 +514,31 @@
         </div>
       </div>
     </section>
+
+    <!-- Stock Detail Panel -->
+    <section id="stockDetailPanel" class="pt-8 hidden">
+      <div class="mx-auto px-12 max-w-2xl bg-white rounded-xl shadow-lg p-8">
+        <a href="javascript:void(0);" onclick="backToTradingPanel()"
+          class="text-blue-600 hover:underline mb-4 inline-block">
+          ← Back to Market
+        </a>
+        <div class="flex items-center mb-6">
+          <img id="detail-stock-logo" src="" alt="logo" class="w-16 h-16 rounded mr-6">
+          <div>
+            <h1 class="text-3xl font-bold text-gray-800" id="detail-stock-name"></h1>
+            <p class="text-gray-500 text-lg" id="detail-stock-symbol"></p>
+          </div>
+        </div>
+        <div class="mb-6">
+          <p class="text-2xl font-bold text-gray-900">$<span id="detail-stock-price"></span></p>
+          <div class="flex items-center mt-2" id="detail-stock-change"></div>
+        </div>
+        <div>
+          <h2 class="text-xl font-semibold mb-2">About</h2>
+          <p class="text-gray-700" id="detail-stock-desc">No description available.</p>
+        </div>
+      </div>
+    </section>
   </div>
 
   <!-- Sell Modal -->
@@ -747,12 +772,49 @@
       { name: "Visa Inc.", symbol: "V", price: 238.72, change: 0.36 }
     ];
 
+    // 股票详情数据补充
+    const stockDetailData = [
+      { name: "Apple Inc.", symbol: "AAPL", price: 175.42, change: 2.35, logo: "https://modao.cc/ai/uploads/ai_pics/6/66423/aigp_1753747615.jpeg", desc: "Apple Inc. designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and accessories worldwide." },
+      { name: "Microsoft Corp.", symbol: "MSFT", price: 336.21, change: 1.64, logo: "https://modao.cc/ai/uploads/ai_pics/6/66424/aigp_1753747617.jpeg", desc: "Microsoft Corporation develops, licenses, and supports software, services, devices, and solutions worldwide." },
+      { name: "Amazon.com Inc.", symbol: "AMZN", price: 132.75, change: -0.87, logo: "https://modao.cc/ai/uploads/ai_pics/6/66425/aigp_1753747619.jpeg", desc: "Amazon.com, Inc. engages in the retail sale of consumer products and subscriptions in North America and internationally." },
+      { name: "Tesla Inc.", symbol: "TSLA", price: 258.93, change: -3.25, logo: "https://modao.cc/ai/uploads/ai_pics/6/66426/aigp_1753747621.jpeg", desc: "Tesla, Inc. designs, develops, manufactures, leases, and sells electric vehicles, and energy generation and storage systems." },
+      { name: "Google LLC", symbol: "GOOGL", price: 138.04, change: 1.22, logo: "https://modao.cc/ai/uploads/ai_pics/6/66427/aigp_1753747622.jpeg", desc: "Google LLC provides various products and platforms including Search, Maps, Gmail, Android, Google Play, Chrome, and YouTube." },
+      { name: "Netflix Inc.", symbol: "NFLX", price: 483.32, change: 4.63, logo: "https://modao.cc/ai/uploads/ai_pics/6/66428/aigp_1753747623.jpeg", desc: "Netflix, Inc. provides entertainment services. It offers TV series, documentaries, feature films, and mobile games." }
+    ];
+
     // View switching function
     function switchPanel(panelId) {
-      document.getElementById('tradingPanel').style.display = 'none';
-      document.getElementById('mainPanel').style.display = 'none';
-      document.getElementById('portfolioPanel').style.display = 'none';
-      document.getElementById(panelId).style.display = 'block';
+      // 切换内容面板
+      ['tradingPanel', 'mainPanel', 'portfolioPanel'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.display = 'none';
+          el.classList.add('hidden');
+        }
+      });
+      const showEl = document.getElementById(panelId);
+      if (showEl) {
+        showEl.style.display = 'block';
+        showEl.classList.remove('hidden');
+      }
+
+      // 切换左侧导航高亮
+      const navBtns = document.querySelectorAll('.glass-nav nav button');
+      navBtns.forEach(btn => {
+        btn.classList.remove('bg-blue-100', 'text-blue-800', 'font-medium');
+        btn.classList.add('text-gray-700');
+      });
+      // 当前按钮加高亮
+      if (panelId === 'mainPanel') {
+        navBtns[0].classList.add('bg-blue-100', 'text-blue-800', 'font-medium');
+        navBtns[0].classList.remove('text-gray-700');
+      } else if (panelId === 'tradingPanel') {
+        navBtns[1].classList.add('bg-blue-100', 'text-blue-800', 'font-medium');
+        navBtns[1].classList.remove('text-gray-700');
+      } else if (panelId === 'portfolioPanel') {
+        navBtns[2].classList.add('bg-blue-100', 'text-blue-800', 'font-medium');
+        navBtns[2].classList.remove('text-gray-700');
+      }
 
       // Initialize charts when main panel is shown
       if (panelId === 'mainPanel') initCharts();
@@ -1022,6 +1084,49 @@
         initCharts();
       }
     });
+
+    // 展示股票详情
+    function showStockDetail(symbol) {
+      // 隐藏其它panel
+      ['tradingPanel', 'mainPanel', 'portfolioPanel'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.display = 'none';
+          el.classList.add('hidden');
+        }
+      });
+      // 显示详情panel
+      const detailPanel = document.getElementById('stockDetailPanel');
+      detailPanel.style.display = 'block';
+      detailPanel.classList.remove('hidden');
+
+      // 查找数据
+      const stock = stockDetailData.find(s => s.symbol === symbol);
+      if (stock) {
+        document.getElementById('detail-stock-logo').src = stock.logo;
+        document.getElementById('detail-stock-logo').alt = stock.name + ' logo';
+        document.getElementById('detail-stock-name').textContent = stock.name;
+        document.getElementById('detail-stock-symbol').textContent = stock.symbol;
+        document.getElementById('detail-stock-price').textContent = stock.price.toFixed(2);
+        document.getElementById('detail-stock-desc').textContent = stock.desc || 'No description available.';
+        const changeDiv = document.getElementById('detail-stock-change');
+        if (stock.change >= 0) {
+          changeDiv.innerHTML = `<iconify-icon icon="mdi:trending-up" class="text-green-500 mr-1"></iconify-icon>
+        <span class="text-green-600 font-bold">+${stock.change}%</span>`;
+        } else {
+          changeDiv.innerHTML = `<iconify-icon icon="mdi:trending-down" class="text-red-500 mr-1"></iconify-icon>
+        <span class="text-red-600 font-bold">${stock.change}%</span>`;
+        }
+      }
+    }
+
+    // 返回市场概览
+    function backToTradingPanel() {
+      document.getElementById('stockDetailPanel').style.display = 'none';
+      document.getElementById('stockDetailPanel').classList.add('hidden');
+      document.getElementById('tradingPanel').style.display = 'block';
+      document.getElementById('tradingPanel').classList.remove('hidden');
+    }
   </script>
 
 </body>
