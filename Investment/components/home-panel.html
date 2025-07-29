@@ -1,0 +1,86 @@
+<section id="homePanel" class="pt-8">
+  <div class="mx-auto px-12 max-w-6xl">
+    <div class="flex justify-between items-center mb-2">
+      <h2 class="text-3xl font-bold text-gray-800">HomePage</h2>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="flex-1 p-8 overflow-auto">
+    <!-- 上方卡片 -->
+    <div class="grid grid-cols-3 gap-6 mb-8">
+      <!-- 总资产 -->
+      <div class="bg-white p-6 rounded-xl shadow flex flex-col justify-center">
+        <p class="text-gray-600 text-sm mb-2">Total Assets</p>
+        <p class="text-4xl font-extrabold text-blue-600 drop-shadow-md">$124,567.68</p>
+      </div>
+
+      <!-- 总收益 -->
+      <div class="bg-white p-6 rounded-xl shadow flex flex-col justify-center">
+        <p class="text-gray-600 text-sm mb-2">Total Return</p>
+        <div class="flex items-center space-x-2 text-green-400 font-medium">
+          <i class="fa-solid fa-arrow-trend-up text-lg"></i>
+          <span class="text-2xl font-semibold">+ $124,56.68</span>
+        </div>
+        <p class="text-sm mt-2 text-gray-500">Rate of Return</p>
+        <p class="text-green-400 text-2xl font-semibold">+ 10.98%</p>
+      </div>
+
+      <!-- Donut Chart -->
+      <div class="bg-white p-6 rounded-xl shadow flex flex-col items-center">
+        <!-- 居中饼图容器 -->
+        <div id="donutChart" class="w-[220px] h-[220px]"></div>
+
+        <!-- 图例：两列对称 -->
+        <div class="grid grid-cols-2 gap-y-2 gap-x-6 mt-4 text-sm text-gray-700">
+          <div class="flex items-center">
+            <span class="inline-block w-3 h-3 rounded-full bg-blue-300 mr-2"></span>
+            <span>BONDS</span>
+          </div>
+          <div class="flex items-center">
+            <span class="inline-block w-3 h-3 rounded-full bg-blue-200 mr-2"></span>
+            <span>CASH</span>
+          </div>
+          <div class="flex items-center">
+            <span class="inline-block w-3 h-3 rounded-full bg-blue-400 mr-2"></span>
+            <span>OTHER ASSETS</span>
+          </div>
+          <div class="flex items-center">
+            <span class="inline-block w-3 h-3 rounded-full bg-blue-600 mr-2"></span>
+            <span>STOCK</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow flex flex-col justify-center">
+      <!-- 顶部标题 + 动态图标 -->
+      <div class="flex items-center mb-2 space-x-2">
+        <p class="text-gray-500 text-sm tracking-wide">Cumulative Return</p>
+        <button id="toggleVisibility" class="focus:outline-none">
+          <iconify-icon id="eyeIcon" icon="mdi:eye-outline" class="text-gray-500 text-xl"></iconify-icon>
+        </button>
+      </div>
+
+
+      <!-- 金额 -->
+      <p id="returnAmount" class="text-4xl font-bold text-blue-400 mb-4">$7,033.22</p>
+
+      <!-- 折线图 -->
+      <div id="lineChart" class="w-full h-60"></div>
+
+      <!-- 时间选项 -->
+      <!-- 时间选项按钮 -->
+      <div class="flex justify-between text-gray-400 text-sm mt-4 px-2" id="timeButtons">
+        <button onclick="updateLineChart('today')" class="font-semibold text-blue-700">Today</button>
+        <button onclick="updateLineChart('week')" class="hover:text-blue-700">This Week</button>
+        <button onclick="updateLineChart('month')" class="hover:text-blue-700">This Month</button>
+        <button onclick="updateLineChart('year')" class="hover:text-blue-700">This Year</button>
+      </div>
+
+
+
+
+    </div>
+  </div>
+</section>

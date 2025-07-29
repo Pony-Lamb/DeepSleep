@@ -24,8 +24,8 @@ const stockDetailData = [
 function switchPanel(panelId) {
   console.log('Switching to panel:', panelId);
 
-  // 只切换这三个面板
-  ['tradingPanel', 'portfolioPanel', 'stockDetailPanel'].forEach(id => {
+  // 切换这四个面板
+  ['homePanel', 'tradingPanel', 'portfolioPanel', 'stockDetailPanel'].forEach(id => {
     const el = document.getElementById(id);
     if (el) {
       el.style.display = 'none';
@@ -622,9 +622,140 @@ window.appInit = function () {
       updateChart(days);
     });
   });
+  // 默认显示homePanel
+  switchPanel('homePanel');
+
+  // 初始化首页图表
+  setTimeout(() => {
+    // Donut Chart
+    const donutDom = document.getElementById('donutChart');
+    if (donutDom) {
+      const donut = echarts.init(donutDom);
+      donut.setOption({
+        tooltip: { trigger: 'item' },
+        color: [
+          '#93c5fd',  // BONDS - blue-300
+          '#bfdbfe',  // CASH - blue-200
+          '#60a5fa',  // OTHER ASSETS - blue-400
+          '#3b82f6'   // STOCK - blue-500
+        ],
+        series: [{
+          type: 'pie',
+          radius: ['60%', '80%'],
+          center: ['50%', '50%'],
+          avoidLabelOverlap: false,
+          itemStyle: {
+            borderRadius: 6,
+            borderColor: '#fff',
+            borderWidth: 2
+          },
+          label: { show: false },
+          emphasis: { label: { show: false } },
+          labelLine: { show: false },
+          data: [
+            { value: 17, name: 'BONDS' },
+            { value: 33, name: 'CASH' },
+            { value: 29, name: 'OTHER ASSETS' },
+            { value: 21, name: 'STOCK' }
+          ]
+        }]
+      });
+      window.addEventListener('resize', () => donut.resize());
+    }
+
+    // Line Chart
+    const lineDom = document.getElementById('lineChart');
+    const toggleBtn = document.getElementById("toggleVisibility");
+    const eyeIcon = document.getElementById("eyeIcon");
+    const returnAmount = document.getElementById("returnAmount");
+    let isVisible = true;
+
+    toggleBtn.addEventListener("click", () => {
+      isVisible = !isVisible;
+      if (isVisible) {
+        eyeIcon.classList.remove("fa-eye-slash");
+        eyeIcon.classList.add("fa-eye");
+        returnAmount.style.display = "block";
+        lineChart.style.display = "block";
+      } else {
+        eyeIcon.classList.remove("fa-eye");
+        eyeIcon.classList.add("fa-eye-slash");
+        returnAmount.style.display = "none";
+        lineChart.style.display = "none";
+      }
+    });
+    let line = null;
+    if (lineDom) {
+      line = echarts.init(lineDom);
+
+      // 图表数据
+      const chartData = {
+        today: [100, 800, 300, 2500, 1400],
+        week: [3000, 3200, 3400, 3900, 3600, 4100, 4200],
+        month: [3000, 3100, 3200, 3400, 3600, 3900, 4000, 4100, 4200, 4300, 4400, 4500],
+        year: Array.from({ length: 12 }, (_, i) => 3000 + i * 150)
+      };
+
+      const xAxisData = {
+        today: ['9am', '10am', '11am', '12pm', '1pm'],
+        week: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        month: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'W9', 'W10', 'W11', 'W12'],
+        year: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      };
+
+      // 控制函数
+      window.updateLineChart = function (period) {
+        // 设置按钮高亮
+        document.querySelectorAll('#timeButtons button').forEach(btn => {
+          btn.classList.remove('text-blue-700', 'font-semibold');
+        });
+        const clicked = {
+          today: 0,
+          week: 1,
+          month: 2,
+          year: 3
+        }[period];
+        document.querySelectorAll('#timeButtons button')[clicked].classList.add('text-blue-700', 'font-semibold');
+
+        line.setOption({
+          xAxis: {
+            type: 'category',
+            data: xAxisData[period],
+            axisLabel: { interval: 0 }
+          },
+          yAxis: { type: 'value' },
+          series: [{
+            data: chartData[period],
+            type: 'line',
+            smooth: true,
+            lineStyle: {
+              color: '#3B82F6',
+              width: 3
+            },
+            areaStyle: {
+              color: 'rgba(59, 130, 246, 0.15)'
+            },
+            symbol: 'circle',
+            symbolSize: 6,
+            itemStyle: {
+              color: '#3B82F6',
+              borderColor: '#fff',
+              borderWidth: 2
+            }
+          }]
+        });
+      };
+
+
+      // 初始图表加载
+      window.updateLineChart('week');
+      window.addEventListener('resize', () => line.resize());
+    }
+  }, 200);
+
   // 默认显示交易面板并初始化图表
   setTimeout(() => {
-    switchPanel('tradingPanel');
+    switchPanel('homePanel');
     setTimeout(() => {
       if (document.getElementById('stockChart')) {
         initStockChart();
@@ -721,4 +852,59 @@ function syncPortfolioPanelButtons() {
     btnsDiv.appendChild(btn);
   });
 }
+
+
+
+//homepage charts
+// Donut Chart
+
+const toggleBtn = document.getElementById("toggleVisibility");
+const eyeIcon = document.getElementById("eyeIcon");
+let isVisible = true;
+
+toggleBtn.addEventListener("click", () => {
+  isVisible = !isVisible;
+
+  // 修改 iconify 的图标属性
+  eyeIcon.setAttribute("icon", isVisible ? "mdi:eye-outline" : "mdi:eye-off-outline");
+
+  // 显隐数据和图表
+  returnAmount.style.display = isVisible ? "block" : "none";
+  lineChart.style.display = isVisible ? "block" : "none";
+});
+const donut = echarts.init(document.getElementById('donutChart'));
+donut.setOption({
+  tooltip: { trigger: 'item' },
+  color: [
+    '#93c5fd',  // BONDS - blue-300
+    '#bfdbfe',  // CASH - blue-200
+    '#60a5fa',  // OTHER ASSETS - blue-400
+    '#3b82f6'   // STOCK - blue-500
+  ],
+  series: [{
+    type: 'pie',
+    radius: ['60%', '80%'],
+    center: ['50%', '50%'],
+    avoidLabelOverlap: false,
+    itemStyle: {
+      borderRadius: 6,
+      borderColor: '#fff',
+      borderWidth: 2
+    },
+    // ✅ 默认 label 隐藏
+    label: { show: false },
+    // ✅ 鼠标悬浮时也不显示文字标签
+    emphasis: {
+      label: { show: false }
+    },
+    // ✅ 关闭引导线
+    labelLine: { show: false },
+    data: [
+      { value: 17, name: 'BONDS' },
+      { value: 33, name: 'CASH' },
+      { value: 29, name: 'OTHER ASSETS' },
+      { value: 21, name: 'STOCK' }
+    ]
+  }]
+});
 

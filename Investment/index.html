@@ -15,6 +15,7 @@
 <body class="flex">
   <div id="nav"></div>
   <div class="w-80-percent h-screen overflow-auto">
+    <div id="homePanel"></div>
     <div id="tradingPanel"></div>
     <div id="portfolioPanel"></div>
     <div id="stockDetailPanel"></div>
@@ -25,6 +26,7 @@
     // 动态加载组件，并在全部加载后初始化
     const components = [
       ['nav', 'components/nav.html'],
+      ['homePanel', 'components/home-panel.html'],
       ['tradingPanel', 'components/trading-panel.html'],
       ['portfolioPanel', 'components/portfolio-panel.html'],
       ['stockDetailPanel', 'components/stockDetail-panel.html'],
@@ -36,15 +38,6 @@
         .then(r => r.text())
         .then(html => {
           document.getElementById(id).innerHTML = html;
-          loaded++;
-          if (loaded === components.length && window.appInit) {
-            setTimeout(() => {
-              window.appInit(); // 组件全部加载后再初始化，添加延迟确保DOM完全渲染
-            }, 100);
-          }
-        })
-        .catch(error => {
-          console.error('Error loading component:', id, error);
           loaded++;
           if (loaded === components.length && window.appInit) {
             setTimeout(() => {
