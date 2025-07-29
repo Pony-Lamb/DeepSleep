@@ -38,8 +38,8 @@ python run.py
 | Home page              | Get previous profit             | `GET`      | `/v1/profit/prev/{user_id}`                         | Get profit of the latest several days by user ID.                                             |
 | Search page            | Search stocks/cash/bonds/others | `POST`     | `/v1/search`                                        | Search asserts(stocks/cash/bonds/others) by content. If content is empty, return all asserts. |
 | Search page            | Buy assets                      | `POST`     | `/v1/asset/buy/{asset_id}/{portfolio_id}/{user_id}` | Buy assets(stocks/cash/bonds) and store in a specific portfolio.                              |
-| Stock information page | Get details of a stock          | `GET`      | `/v1/asset/{asset_id}`                              | Get details of an asset(stock/cash/bond/others) by asset ID.                                  |
-| Stock information page | Get previous price of a stock   | `GET`      | `/v1/asset/prev/{asset_id}`                         | Get asset(stock/cash/bond/others) price of the latest several days by asset ID.               |
+| Asset information page | Get details of an asset         | `GET`      | `/v1/asset/{asset_id}`                              | Get details of an asset(stock/cash/bond/others) by asset ID.                                  |
+| Asset information page | Get previous price of an asset  | `GET`      | `/v1/asset/prev/{asset_id}`                         | Get asset(stock/cash/bond/others) price of the latest several days by asset ID.               |
 | Portfolio page         | Get portfolio names             | `GET`      | `/v1/portfolio/name/{user_id}`                      | Get portfolio names by user ID.                                                               |
 | Portfolio page         | Create a portfolio              | `POST`     | `/v1/portfolio/create/{user_id}`                    | Create portfolio names by user ID.                                                            |
 | Portfolio page         | Get details of a portfolio      | `GET`      | `/v1/portfolio/{portfolio_id}`                      | Get details of a portfolio by portfolio ID.                                                   |
@@ -124,8 +124,6 @@ GET /v1/profit/total/{user_id}
 ```
 
 **🧾Request Parameters**
-
-*None*
 
 | Parameter | Type | Mandatory | Example      | Description                     |
 |-----------|------|-----------|--------------|---------------------------------|
@@ -252,10 +250,9 @@ POST /v1/search
 
 **🧾Request Parameters**
 
-| Parameter | Type | Mandatory | Example | Description |
-|-----------|------|-----------|------|-------------|
-| content   | str  | No        | 'A'  | Search asserts(stocks/cash/bonds) by content. If content is empty, return all asserts.     |
-
+| Parameter | Type | Mandatory | Example | Description                                                                            |
+|-----------|------|-----------|---------|----------------------------------------------------------------------------------------|
+| content   | str  | No        | 'A'     | Search asserts(stocks/cash/bonds) by content. If content is empty, return all asserts. |
 
 **✅ Successful Response**
 
@@ -272,7 +269,7 @@ POST /v1/search
       "change": "0.0351",
       "peg": "peg",
       "dividend": "dividend"
-    }, 
+    },
     {
       "asset_id": "AMZN",
       "name": "yyy stock",
@@ -305,7 +302,9 @@ POST /v1/asset/buy/{asset_id}/{portfolio_id}/{user_id}
 
 **🧾Request Parameters**
 
-*None*
+| Parameter | Type | Mandatory | Example | Description                      |
+|-----------|------|-----------|---------|----------------------------------|
+| num       | int  | Yes       | 10      | How many assets you want to buy? |
 
 **✅ Successful Response**
 
@@ -325,46 +324,32 @@ POST /v1/asset/buy/{asset_id}/{portfolio_id}/{user_id}
 }
 ```
 
-### 3.8 Get details of a stock
+### 3.8 Get details of an asset
 
 **📍API**
 
 ``` bash
-GET /v1/users/{user_id}
+GET /v1/asset/{asset_id}
 ```
 
 **🧾Request Parameters**
 
 *None*
 
-[//]: # (| Parameter | Type | Mandatory | Example | Description |)
-
-[//]: # (|--------|-|-----------|---------|-------------|)
-
-[//]: # (| user_id | int | Yes       | 12345   | user id     |)
-
-[//]: # (| expand | bool | No        | true    | xx          |)
-
-**🧾Headers**
-
-*None*
-
-[//]: # (| Header         | Mandatory | Example                      | Description      |)
-
-[//]: # (|----------------|-----------|-----------------------------|-----------|)
-
-[//]: # (| Authorization  | Yes       | Bearer eyJhbGciOiJIUzI1...  | Token    |)
-
 **✅ Successful Response**
 
 ```json
 {
   "code": 200,
-  "message": "Successfully retrieved user information",
+  "message": "Successfully retrieved asset information！",
   "data": {
-    "user_id": 1,
-    "name": "user_1",
-    "email": "user1@mail.com"
+    "asset_id": "AAPL",
+    "name": "xxx stock",
+    "category": "stocks",
+    "price": "35.19",
+    "change": "0.0351",
+    "peg": "peg",
+    "dividend": "dividend"
   }
 }
 ```
@@ -374,50 +359,41 @@ GET /v1/users/{user_id}
 ```json
 {
   "code": 404,
-  "message": "User not found."
+  "message": "Invalid asset ID."
 }
 ```
 
-### 3.1 Get user information
+### 3.9 Get previous price of an asset
 
 **📍API**
 
 ``` bash
-GET /v1/users/{user_id}
+GET /v1/asset/prev/{asset_id}
 ```
 
 **🧾Request Parameters**
 
-*None*
-
-[//]: # (| Parameter | Type | Mandatory | Example | Description |)
-
-[//]: # (|--------|-|-----------|---------|-------------|)
-
-[//]: # (| user_id | int | Yes       | 12345   | user id     |)
-
-[//]: # (| expand | bool | No        | true    | xx          |)
-
-**🧾Headers**
-
-*None*
-
-[//]: # (| Header         | Mandatory | Example                      | Description      |)
-
-[//]: # (|----------------|-----------|-----------------------------|-----------|)
-
-[//]: # (| Authorization  | Yes       | Bearer eyJhbGciOiJIUzI1...  | Token    |)
+| Parameter | Type | Mandatory | Example      | Description                       |
+|-----------|------|-----------|--------------|-----------------------------------|
+| fromDate  | str  | Yes       | '2025-07-29' | Asset previous price (start date) |
+| toDate    | str  | Yes       | '2025-07-23' | Asset previous price (end date)   |
 
 **✅ Successful Response**
 
 ```json
 {
   "code": 200,
-  "message": "Successfully retrieved user information",
+  "message": "Successfully retrieved previous asset price!",
   "data": {
-    "user_id": 1,
-    "name": "user_1",
-    "email": "user1@mail.com"
+    "prices": [
+      "31.83",
+      "31.01",
+      "29.57",
+      "30.20",
+      "31.92",
+      "32.50",
+      "32.83"
+    ]
   }
 }
 ```
@@ -427,50 +403,34 @@ GET /v1/users/{user_id}
 ```json
 {
   "code": 404,
-  "message": "User not found."
+  "message": "Invalid asset ID or date."
 }
 ```
 
-### 3.1 Get user information
+### 3.10 Get portfolio names
 
 **📍API**
 
 ``` bash
-GET /v1/users/{user_id}
+GET /v1/portfolio/name/{user_id}
 ```
 
 **🧾Request Parameters**
 
 *None*
 
-[//]: # (| Parameter | Type | Mandatory | Example | Description |)
-
-[//]: # (|--------|-|-----------|---------|-------------|)
-
-[//]: # (| user_id | int | Yes       | 12345   | user id     |)
-
-[//]: # (| expand | bool | No        | true    | xx          |)
-
-**🧾Headers**
-
-*None*
-
-[//]: # (| Header         | Mandatory | Example                      | Description      |)
-
-[//]: # (|----------------|-----------|-----------------------------|-----------|)
-
-[//]: # (| Authorization  | Yes       | Bearer eyJhbGciOiJIUzI1...  | Token    |)
-
 **✅ Successful Response**
 
 ```json
 {
   "code": 200,
-  "message": "Successfully retrieved user information",
+  "message": "Successfully retrieved portfolio names!",
   "data": {
-    "user_id": 1,
-    "name": "user_1",
-    "email": "user1@mail.com"
+    "portfolios": [
+      "portfolio_A",
+      "portfolio_B",
+      "portfolio_C"
+    ]
   }
 }
 ```
@@ -480,51 +440,72 @@ GET /v1/users/{user_id}
 ```json
 {
   "code": 404,
-  "message": "User not found."
+  "message": "Invalid user."
 }
 ```
 
-### 3.1 Get user information
+### 3.11 Create a portfolio
 
 **📍API**
 
 ``` bash
-GET /v1/users/{user_id}
+POST /v1/portfolio/create/{user_id}
+```
+
+**🧾Request Parameters**
+
+| Parameter | Type | Mandatory | Example       | Description     |
+|-----------|------|-----------|---------------|-----------------|
+| name      | str  | Yes       | 'portfolio_D' | Portfolio name. |
+
+```json
+{
+  "code": 200,
+  "message": "Successfully created a portfolio!"
+}
+```
+
+**❌ Error Response**
+
+```json
+{
+  "code": 500,
+  "message": "Internal Server Error."
+}
+```
+
+### 3.12 Get details of a portfolio
+
+**📍API**
+
+``` bash
+GET /v1/portfolio/{portfolio_id}
 ```
 
 **🧾Request Parameters**
 
 *None*
 
-[//]: # (| Parameter | Type | Mandatory | Example | Description |)
-
-[//]: # (|--------|-|-----------|---------|-------------|)
-
-[//]: # (| user_id | int | Yes       | 12345   | user id     |)
-
-[//]: # (| expand | bool | No        | true    | xx          |)
-
-**🧾Headers**
-
-*None*
-
-[//]: # (| Header         | Mandatory | Example                      | Description      |)
-
-[//]: # (|----------------|-----------|-----------------------------|-----------|)
-
-[//]: # (| Authorization  | Yes       | Bearer eyJhbGciOiJIUzI1...  | Token    |)
-
 **✅ Successful Response**
 
 ```json
 {
   "code": 200,
-  "message": "Successfully retrieved user information",
-  "data": {
-    "user_id": 1,
-    "name": "user_1",
-    "email": "user1@mail.com"
-  }
+  "message": "Successfully retrieved portfolio information!",
+  "data": [
+    {
+      "portfolio_name": "portfolio_A",
+      "user_id": 1,
+      "asset_id": "AAPL",
+      "quantity": 10
+    },
+    {
+      "portfolio_name": "portfolio_A",
+      "user_id": 1,
+      "asset_id": "TSLA",
+      "quantity": 30
+    }
+  ]
 }
 ```
 
@@ -533,51 +514,30 @@ GET /v1/users/{user_id}
 ```json
 {
   "code": 404,
-  "message": "User not found."
+  "message": "Invalid portfolio ID."
 }
 ```
 
-### 3.1 Get user information
+### 3.13 Sell assets
 
 **📍API**
 
 ``` bash
-GET /v1/users/{user_id}
+POST /v1/asset/sell/{asset_id}/{user_id}
 ```
 
 **🧾Request Parameters**
 
-*None*
-
-[//]: # (| Parameter | Type | Mandatory | Example | Description |)
-
-[//]: # (|--------|-|-----------|---------|-------------|)
-
-[//]: # (| user_id | int | Yes       | 12345   | user id     |)
-
-[//]: # (| expand | bool | No        | true    | xx          |)
-
-**🧾Headers**
-
-*None*
-
-[//]: # (| Header         | Mandatory | Example                      | Description      |)
-
-[//]: # (|----------------|-----------|-----------------------------|-----------|)
-
-[//]: # (| Authorization  | Yes       | Bearer eyJhbGciOiJIUzI1...  | Token    |)
+| Parameter | Type | Mandatory | Example | Description                       |
+|-----------|------|-----------|---------|-----------------------------------|
+| num       | int  | Yes       | 10      | How many assets you want to sell? |
 
 **✅ Successful Response**
 
 ```json
 {
   "code": 200,
-  "message": "Successfully retrieved user information",
-  "data": {
-    "user_id": 1,
-    "name": "user_1",
-    "email": "user1@mail.com"
-  }
+  "message": "Successfully sell assets!"
 }
 ```
 
@@ -585,60 +545,7 @@ GET /v1/users/{user_id}
 
 ```json
 {
-  "code": 404,
-  "message": "User not found."
-}
-```
-
-### 3.1 Get user information
-
-**📍API**
-
-``` bash
-GET /v1/users/{user_id}
-```
-
-**🧾Request Parameters**
-
-*None*
-
-[//]: # (| Parameter | Type | Mandatory | Example | Description |)
-
-[//]: # (|--------|-|-----------|---------|-------------|)
-
-[//]: # (| user_id | int | Yes       | 12345   | user id     |)
-
-[//]: # (| expand | bool | No        | true    | xx          |)
-
-**🧾Headers**
-
-*None*
-
-[//]: # (| Header         | Mandatory | Example                      | Description      |)
-
-[//]: # (|----------------|-----------|-----------------------------|-----------|)
-
-[//]: # (| Authorization  | Yes       | Bearer eyJhbGciOiJIUzI1...  | Token    |)
-
-**✅ Successful Response**
-
-```json
-{
-  "code": 200,
-  "message": "Successfully retrieved user information",
-  "data": {
-    "user_id": 1,
-    "name": "user_1",
-    "email": "user1@mail.com"
-  }
-}
-```
-
-**❌ Error Response**
-
-```json
-{
-  "code": 404,
-  "message": "User not found."
+  "code": 500,
+  "message": "Internal Server Error."
 }
 ```
