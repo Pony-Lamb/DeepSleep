@@ -27,7 +27,7 @@ CREATE TABLE portfolio (
 
 #用户信息表，展示用户详细信息
 CREATE TABLE user_info (
-	user_id INT AUTO_INCREMENT NOT NULL,
+	user_id INT NOT NULL,
     user_name VARCHAR(100) NOT NULL,
     available_funds FLOAT #现金余额
    #PRIMARY KEY (user_id) #portfolio_name作为主键
