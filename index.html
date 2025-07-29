@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock K-Line Chart Analysis</title>
+  <!-- Import ECharts library -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+  <!-- Import Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Import Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- Configure Tailwind custom colors -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1E293B',
+            secondary: '#0F172A',
+            accent: '#3B82F6',
+            rise: '#EF4444',    // Up color (red)
+            fall: '#10B981',    // Down color (green)
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .stock-card {
+        @apply bg-primary rounded-lg shadow-md p-4 transition-all duration-300 hover:shadow-lg;
+      }
+      .chart-container {
+        @apply bg-primary rounded-lg shadow-md p-4 md:p-6;
+      }
+      .active-period {
+        @apply bg-accent text-white;
+      }
+      .inactive-period {
+        @apply bg-primary text-gray-300 hover:bg-primary/80 transition-colors;
+      }
+    }
+  </style>
+</head>
+<body class="bg-secondary text-gray-100 min-h-screen">
+  <div class="container mx-auto px-4 py-6 max-w-7xl">
+    <!-- Page title and stock information -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+      <div>
+        <h1 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold">AAPL Apple Inc.</h1>
+        <p class="text-gray-400">NASDAQ · US Stock</p>
+      </div>
+      <div class="mt-4 md:mt-0 flex items-center">
+        <span class="text-2xl font-bold mr-3 text-rise">195.11</span>
+        <span class="bg-rise/10 text-rise px-2 py-1 rounded text-sm flex items-center">
+          <i class="fa fa-caret-up mr-1"></i>0.83 (0.43%)
+        </span>
+      </div>
+    </div>
+    
+    <!-- Stock overview data -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="stock-card">
+        <div class="text-gray-400 text-sm">Open</div>
+        <div class="text-lg font-semibold mt-1">194.27</div>
+      </div>
+      <div class="stock-card">
+        <div class="text-gray-400 text-sm">Close</div>
+        <div class="text-lg font-semibold mt-1 text-rise">195.11</div>
+      </div>
+      <div class="stock-card">
+        <div class="text-gray-400 text-sm">High</div>
+        <div class="text-lg font-semibold mt-1 text-rise">195.89</div>
+      </div>
+      <div class="stock-card">
+        <div class="text-gray-400 text-sm">Low</div>
+        <div class="text-lg font-semibold mt-1">192.83</div>
+      </div>
+    </div>
+    
+    <!-- Time period selector -->
+    <div class="flex flex-wrap gap-2 mb-6">
+      <button class="active-period px-4 py-2 rounded-md text-sm font-medium" data-days="30">30 Days</button>
+      <button class="inactive-period px-4 py-2 rounded-md text-sm font-medium" data-days="60">60 Days</button>
+      <button class="inactive-period px-4 py-2 rounded-md text-sm font-medium" data-days="90">90 Days</button>
+    </div>
+    
+    <!-- K-line chart container -->
+    <div class="chart-container h-[500px] mb-6">
+      <div id="stockChart" class="w-full h-full"></div>
+    </div>
+    
+    <!-- Chart explanation -->
+    <div class="bg-primary/50 rounded-lg p-4 text-sm text-gray-400">
+      <p><i class="fa fa-info-circle mr-2"></i>Chart Explanation: Red candlesticks indicate price increase (closing price higher than opening price), green candlesticks indicate price decrease (closing price lower than opening price). The upper and lower shadows of the candlesticks represent the highest and lowest prices of the day, respectively. Bollinger Bands consist of a middle band (SMA) and two outer bands representing volatility.</p>
+    </div>
+  </div>
+
+  <script>
+    // Initialize chart
+    const chartDom = document.getElementById('stockChart');
+    const myChart = echarts.init(chartDom);
+    
+    // Generate simulated stock data
+    function generateStockData(days = 30) {
+      const data = [];
+      let date = new Date();
+      date.setDate(date.getDate() - days - 10); // Start from enough days ago
+      let price = 180 + Math.random() * 10; // Initial price
+      
+      for (let i = 0; i < days; i++) {
+        // Skip weekends
+        if (date.getDay() === 0 || date.getDay() === 6) {
+          date.setDate(date.getDate() + 1);
+          i--;
+          continue;
+        }
+        
+        // Generate random price fluctuations
+        const change = (Math.random() - 0.45) * 2; // Slight upward bias
+        const open = price;
+        const close = open + change;
+        const high = Math.max(open, close) + Math.random() * 1.5;
+        const low = Math.min(open, close) - Math.random() * 1.5;
+        
+        // Format date
+        const dateStr = `${date.getMonth() + 1}/${date.getDate()}`;
+        
+        data.push([
+          dateStr,
+          open.toFixed(2) * 1,
+          close.toFixed(2) * 1,
+          low.toFixed(2) * 1,
+          high.toFixed(2) * 1
+        ]);
+        
+        // Update price and date
+        price = close;
+        date.setDate(date.getDate() + 1);
+      }
+      
+      return data;
+    }
+    
+    // Calculate Bollinger Bands
+    function calculateBollingerBands(data, period = 20, stdDev = 2) {
+      const closePrices = data.map(item => item[2]); // Get closing prices
+      const bollingerData = [];
+      
+      for (let i = 0; i < data.length; i++) {
+        // Wait until we have enough data for the first calculation
+        if (i < period - 1) {
+          bollingerData.push([null, null, null]);
+          continue;
+        }
+        
+        // Calculate simple moving average (SMA)
+        let sum = 0;
+        for (let j = 0; j < period; j++) {
+          sum += closePrices[i - j];
+        }
+        const sma = sum / period;
+        
+        // Calculate standard deviation
+        let variance = 0;
+        for (let j = 0; j < period; j++) {
+          variance += Math.pow(closePrices[i - j] - sma, 2);
+        }
+        const std = Math.sqrt(variance / period);
+        
+        // Calculate upper and lower bands
+        const upper = sma + stdDev * std;
+        const lower = sma - stdDev * std;
+        
+        bollingerData.push([upper.toFixed(2) * 1, sma.toFixed(2) * 1, lower.toFixed(2) * 1]);
+      }
+      
+      return bollingerData;
+    }
+    
+    // Calculate Y-axis reasonable range
+    function calculateYAxisRange(data) {
+      // Extract all price data
+      const allPrices = [];
+      data.forEach(item => {
+        allPrices.push(item[1]); // Open
+        allPrices.push(item[2]); // Close
+        allPrices.push(item[3]); // Low
+        allPrices.push(item[4]); // High
+      });
+      
+      const min = Math.min(...allPrices);
+      const max = Math.max(...allPrices);
+      const range = max - min;
+      
+      // Add 10% padding for better appearance
+      const padding = range * 0.1;
+      
+      return [Math.floor(min - padding), Math.ceil(max + padding)];
+    }
+    
+    // Update chart with specified number of days
+    function updateChart(days) {
+      // Generate stock data for the specified number of days (max 90)
+      const effectiveDays = Math.min(days, 90);
+      const stockData = generateStockData(effectiveDays);
+      
+      // Calculate Bollinger Bands
+      const bollingerData = calculateBollingerBands(stockData);
+      
+      // Calculate Y-axis range
+      const [yMin, yMax] = calculateYAxisRange(stockData);
+      
+      // Configure chart options
+      const option = {
+        backgroundColor: 'transparent',
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross'
+            }
+        },
+        grid: {
+          left: '10',
+          right: '10',
+          bottom: '30',
+          top: '30',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          data: stockData.map(item => item[0]),
+          axisLine: {
+            lineStyle: {
+              color: '#475569'
+            }
+          },
+          axisLabel: {
+            color: '#94A3B8',
+            rotate: 45,
+            interval: 'auto'
+          }
+        },
+        yAxis: {
+          type: 'value',
+          min: yMin,
+          max: yMax,
+          axisLine: {
+            lineStyle: {
+              color: '#475569'
+            }
+          },
+          axisLabel: {
+            color: '#94A3B8',
+            formatter: '{value}'
+          },
+          splitLine: {
+            lineStyle: {
+              color: 'rgba(71, 85, 105, 0.2)'
+            }
+          }
+        },
+        series: [
+          {
+            type: 'candlestick',
+            data: stockData.map(item => [item[1], item[2], item[3], item[4]]),
+            itemStyle: {
+              color: '#EF4444',       // Up color (red)
+              color0: '#10B981',      // Down color (green)
+              borderColor: '#EF4444', // Up border color
+              borderColor0: '#10B981' // Down border color
+            },
+            emphasis: {
+              itemStyle: {
+                color: '#F87171',
+                color0: '#34D399',
+                borderColor: '#F87171',
+                borderColor0: '#34D399'
+              }
+            },
+            tooltip: {
+              formatter: null
+            }
+          },
+          {
+            type: 'line',
+            name: 'Bollinger Upper',
+            data: bollingerData.map(item => item[0]),
+            lineStyle: {
+              color: '#60A5FA',
+              width: 1
+            },
+            showSymbol: false,
+            tooltip: {
+              formatter: null
+            }
+          },
+          {
+            type: 'line',
+            name: 'Bollinger Middle (SMA)',
+            data: bollingerData.map(item => item[1]),
+            lineStyle: {
+              color: '#FBBF24',
+              width: 1.5
+            },
+            showSymbol: false,
+            tooltip: {
+              formatter: null
+            }
+          },
+          {
+            type: 'line',
+            name: 'Bollinger Lower',
+            data: bollingerData.map(item => item[2]),
+            lineStyle: {
+              color: '#60A5FA',
+              width: 1
+            },
+            showSymbol: false,
+            tooltip: {
+              formatter: null
+            }
+          }
+        ]
+      };
+      
+      // Set chart options
+      myChart.setOption(option);
+    }
+    
+    // Initialize with 30 days data
+    updateChart(30);
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+      myChart.resize();
+    });
+    
+    // Add interaction for period buttons
+    const periodButtons = document.querySelectorAll('.flex-wrap button');
+    periodButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        // Remove active state from all buttons
+        periodButtons.forEach(btn => {
+          btn.classList.remove('active-period');
+          btn.classList.add('inactive-period');
+        });
+        
+        // Set current button as active
+        this.classList.remove('inactive-period');
+        this.classList.add('active-period');
+        
+        // Update chart with selected number of days
+        const days = parseInt(this.getAttribute('data-days'));
+        updateChart(days);
+      });
+    });
+  </script>
+</body>
+</html>
