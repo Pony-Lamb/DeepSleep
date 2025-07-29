@@ -384,6 +384,15 @@ GET /v1/asset/prev/{asset_id}
   "code": 200,
   "message": "Successfully retrieved previous asset price!",
   "data": {
+    "dates": [
+      "2025-07-23",
+      "2025-07-24",
+      "2025-07-25",
+      "2025-07-26",
+      "2025-07-27",
+      "2025-07-28",
+      "2025-07-29"
+    ],
     "high_prices": [
       "31.83",
       "31.01",
