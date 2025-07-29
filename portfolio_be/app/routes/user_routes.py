@@ -4,7 +4,7 @@ from app.models.user import User
 user_bp = Blueprint('user', __name__)
 
 
-@user_bp.route("/<int:user_id>", methods=["GET"])
+@user_bp.route("/<int:user_id>", methods=["GET"])  # API 3.1
 def get_user_info(user_id):
     user_info = User.query.get(user_id)
     if not user_info:

@@ -29,14 +29,14 @@ python run.py
 
 ## 3 API Interfaces
 
-| **Category**           | **Functionality**               | **Method** | **Url**                                             | **Description**                                                                                      |
-|------------------------|---------------------------------|------------|-----------------------------------------------------|------------------------------------------------------------------------------------------------------|
-| Home page              | Get user information            | `GET`      | `/api/v1/users/{user_id}`                           | Get user personal information by user ID.                                                            |
+| **Category**           | **Functionality**               | **Method** | **Url**                                                 | **Description**                                                                                      |
+|------------------------|---------------------------------|------------|---------------------------------------------------------|------------------------------------------------------------------------------------------------------|
+| Home page              | Get user information            | `GET`      | `/api/v1/users/{user_id}`                               | Get user personal information by user ID.                                                            |
 | Home page              | Get total asset                 | `GET`      | `/api/v1/asset/total/{user_id}`                         | Get total asset by user ID.                                                                          |
 | Home page              | Get total profit                | `GET`      | `/api/v1/profit/total/{user_id}`                        | Get total profit by user ID.                                                                         |
 | Home page              | Get total asset allocation      | `GET`      | `/api/v1/asset/total/allocation/{user_id}`              | Get total asset allocation details by user ID.                                                       |
 | Home page              | Get previous profit             | `GET`      | `/api/v1/profit/prev/{user_id}`                         | Get profit of the latest several days by user ID.                                                    |
-| Search page            | Search stocks/cash/bonds/others | `POST`     | `/api/v1/search`                                        | Search asserts(stocks/cash/bonds/others) by content. If content is empty, return all asserts.        |
+| Search page            | Search stocks/cash/bonds/others | `POST`     | `/api/v1/asset/search`                                  | Search asserts(stocks/cash/bonds/others) by content. If content is empty, return all asserts.        |
 | Search page            | Buy assets                      | `POST`     | `/api/v1/asset/buy/{asset_id}/{portfolio_id}/{user_id}` | Buy assets(stocks/cash/bonds) and store in a specific portfolio.                                     |
 | Asset information page | Get details of an asset         | `GET`      | `/api/v1/asset/{asset_id}`                              | Get details of an asset(stock/cash/bond/others) by asset ID.                                         |
 | Asset information page | Get previous price of an asset  | `GET`      | `/api/v1/asset/prev/{asset_id}`                         | Get asset(stock/cash/bond/others) price(high/low/close/open) of the latest several days by asset ID. |
@@ -251,41 +251,84 @@ GET /api/v1/profit/prev/{user_id}
 **📍API**
 
 ``` bash
-POST /api/v1/search
+POST /api/v1/asset/search
 ```
 
 **🧾Request Parameters**
 
-| Parameter | Type | Mandatory | Example | Description                                                                            |
-|-----------|------|-----------|---------|----------------------------------------------------------------------------------------|
-| content   | str  | No        | 'A'     | Search asserts(stocks/cash/bonds) by content. If content is empty, return all asserts. |
+| Parameter | Type | Mandatory | Example      | Description                                                                            |
+|-----------|------|-----------|--------------|----------------------------------------------------------------------------------------|
+| content   | str  | No        | 'A'          | Search asserts(stocks/cash/bonds) by content. If content is empty, return all asserts. |
+| date      | str  | Yes       | '2023-05-01' | Asset details of which date.                                                           |
 
 **✅ Successful Response**
 
 ```json
 {
-  "code": 200,
-  "message": "Successfully searched！",
-  "data": [
-    {
-      "asset_id": "AAPL",
-      "name": "xxx stock",
-      "category": "stocks",
-      "price": "35.19",
-      "change": "0.0351",
-      "peg": "peg",
-      "dividend": "dividend"
-    },
-    {
-      "asset_id": "AMZN",
-      "name": "yyy stock",
-      "category": "stocks",
-      "price": "9.66",
-      "change": "0.1902",
-      "peg": "peg",
-      "dividend": "dividend"
-    }
-  ]
+    "code": 200,
+    "data": [
+        {
+            "asset_id": "AAPL",
+            "category": "科技",
+            "close_price": "151.80",
+            "data_date": "2023-05-01",
+            "high_price": "152.75",
+            "low_price": "149.25",
+            "name": "苹果公司",
+            "open_price": "150.50"
+        },
+        {
+            "asset_id": "GOOGL",
+            "category": "科技",
+            "close_price": "106.30",
+            "data_date": "2023-05-01",
+            "high_price": "107.20",
+            "low_price": "104.50",
+            "name": "谷歌A类股",
+            "open_price": "105.75"
+        },
+        {
+            "asset_id": "TSLA",
+            "category": "科技",
+            "close_price": "166.75",
+            "data_date": "2023-05-01",
+            "high_price": "168.90",
+            "low_price": "162.30",
+            "name": "特斯拉",
+            "open_price": "165.40"
+        },
+        {
+            "asset_id": "NVDA",
+            "category": "科技",
+            "close_price": "273.25",
+            "data_date": "2023-05-01",
+            "high_price": "275.80",
+            "low_price": "268.40",
+            "name": "英伟达",
+            "open_price": "270.60"
+        },
+        {
+            "asset_id": "BAC",
+            "category": "金融",
+            "close_price": "32.60",
+            "data_date": "2023-05-01",
+            "high_price": "32.90",
+            "low_price": "32.10",
+            "name": "美国银行",
+            "open_price": "32.45"
+        },
+        {
+            "asset_id": "AMZN",
+            "category": "消费",
+            "close_price": "111.75",
+            "data_date": "2023-05-01",
+            "high_price": "112.40",
+            "low_price": "109.50",
+            "name": "亚马逊",
+            "open_price": "110.30"
+        }
+    ],
+    "message": "Successfully searched!"
 }
 ```
 
@@ -295,6 +338,13 @@ POST /api/v1/search
 {
   "code": 500,
   "message": "Internal Server Error."
+}
+```
+
+```json
+{
+  "code": 404,
+  "message": "Invalid user."
 }
 ```
 
@@ -346,17 +396,13 @@ GET /api/v1/asset/{asset_id}
 
 ```json
 {
-  "code": 200,
-  "message": "Successfully retrieved asset information！",
-  "data": {
-    "asset_id": "AAPL",
-    "name": "xxx stock",
-    "category": "stocks",
-    "price": "35.19",
-    "change": "0.0351",
-    "peg": "peg",
-    "dividend": "dividend"
-  }
+    "code": 200,
+    "data": {
+        "asset_id": "AAPL",
+        "category": "科技",
+        "name": "苹果公司"
+    },
+    "message": "Successfully retrieved asset information!"
 }
 ```
 
@@ -366,6 +412,13 @@ GET /api/v1/asset/{asset_id}
 {
   "code": 404,
   "message": "Invalid asset ID."
+}
+```
+
+```json
+{
+  "code": 500,
+  "message": "Internal Server Error."
 }
 ```
 
@@ -465,15 +518,14 @@ GET /api/v1/portfolio/name/{user_id}
 
 ```json
 {
-  "code": 200,
-  "message": "Successfully retrieved portfolio names!",
-  "data": {
-    "portfolios": [
-      "portfolio_A",
-      "portfolio_B",
-      "portfolio_C"
-    ]
-  }
+    "code": 200,
+    "data": {
+        "portfolios": [
+            "科技爱好者",
+            "稳健投资"
+        ]
+    },
+    "message": "Successfully retrieved portfolio names!"
 }
 ```
 
@@ -483,6 +535,13 @@ GET /api/v1/portfolio/name/{user_id}
 {
   "code": 404,
   "message": "Invalid user."
+}
+```
+
+```json
+{
+  "code": 500,
+  "message": "Internal Server Error."
 }
 ```
 
