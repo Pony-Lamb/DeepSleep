@@ -18,3 +18,31 @@ WHERE data_date = (SELECT MAX(data_date)
                    WHERE C.asset_id = b.asset_id
                    GROUP BY C.asset_id)
                    
+				   
+#视图-投资组合资产市值表，展示用户各投资组合的市值
+SELECT B.user_name,
+	   A.portfolio_name,
+	   data_date,
+	   SUM((SELECT open_price * quantity)) AS asset_value
+FROM portfolio A
+LEFT JOIN user_info B
+ON A.user_id = B.user_id
+LEFT JOIN assets C
+ON A.asset_id = C.asset_id
+GROUP BY B.user_name, A.portfolio_name, data_date
+
+#视图-全表，仅查询数据结构，按需使用
+SELECT *
+FROM portfolio A
+LEFT JOIN user_info B
+ON A.user_id = B.user_id
+LEFT JOIN assets C
+ON A.asset_id = C.asset_id
+
+#视图-用户投资组合表，返回各用户持有的投资组合
+SELECT DISTINCT A.user_id,
+	   A.user_name,
+	   B.portfolio_name
+FROM user_info A, portfolio B
+WHERE A.user_id = B.user_id
+
