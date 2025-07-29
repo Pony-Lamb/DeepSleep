@@ -65,8 +65,7 @@ GET /v1/users/{user_id}
   "message": "Successfully retrieved user information!",
   "data": {
     "user_id": 1,
-    "name": "user_1",
-    "email": "user1@mail.com"
+    "name": "user_1"
   }
 }
 ```

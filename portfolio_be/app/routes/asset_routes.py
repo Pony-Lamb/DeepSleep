@@ -1,4 +1,3 @@
-# app/routes/asset_routes.py
 from flask import Blueprint, request, jsonify
 from app.models.asset import Asset
 from app import db

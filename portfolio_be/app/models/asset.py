@@ -1,5 +1,7 @@
-# app/models/asset.py
-from app import db
+from .. import db_connection
+
+db = db_connection.db
+
 
 class Asset(db.Model):
     id = db.Column(db.Integer, primary_key=True)
