@@ -3,10 +3,11 @@ from .. import db_connection
 db = db_connection.db
 
 
-class Asset(db.Model):
+class PortfolioDailyValue(db.Model):
+    __tablename__ = 'portfolio_daily_value'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128), nullable=False)
-    category = db.Column(db.String(64))
-    value = db.Column(db.Float)
-    location = db.Column(db.String(128))
-    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    user_id = db.Column(db.Integer)
+    user_name = db.Column(db.String(100))
+    portfolio_name = db.Column(db.String(100))
+    asset_value = db.Column(db.Float)
+    data_date = db.Column(db.DATE)

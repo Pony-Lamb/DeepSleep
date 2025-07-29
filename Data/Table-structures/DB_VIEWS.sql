@@ -21,16 +21,18 @@ WHERE data_date = (SELECT MAX(data_date)
 				   
 #视图-投资组合资产市值表，展示用户各投资组合的市值
 CREATE VIEW portfolio_daily_value AS
-SELECT B.user_name,
+SELECT ROW_NUMBER() OVER (ORDER BY B.user_id, A.portfolio_name, data_date) AS id,
+       B.user_id,
+       B.user_name,
 	   A.portfolio_name,
 	   data_date,
-	   SUM((SELECT open_price * quantity)) AS asset_value
+	   SUM(C.open_price * A.quantity) AS asset_value
 FROM portfolio A
 LEFT JOIN user_info B
 ON A.user_id = B.user_id
 LEFT JOIN assets C
 ON A.asset_id = C.asset_id
-GROUP BY B.user_name, A.portfolio_name, data_date;
+GROUP BY B.user_id, B.user_name, A.portfolio_name, data_date;
 
 #视图-全表，仅查询数据结构，按需使用
 SELECT *

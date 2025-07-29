@@ -18,7 +18,7 @@ def create_app(testing=False):
     api_version = app.config.get("VERSION", "v1")
 
     # Register blueprint
-    app.register_blueprint(asset_bp, url_prefix=f"/api/{api_version}/assets")
+    app.register_blueprint(asset_bp, url_prefix=f"/api/{api_version}/asset")
     app.register_blueprint(user_bp, url_prefix=f"/api/{api_version}/users")
 
     return app
