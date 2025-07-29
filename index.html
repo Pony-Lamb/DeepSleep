@@ -917,28 +917,121 @@
     ];
 
     // View switching function
+    // function switchPanel(panelId) {
+    //   // 切换内容面板
+    //   ['tradingPanel', 'mainPanel', 'portfolioPanel'].forEach(id => {
+    //     const el = document.getElementById(id);
+    //     if (el) {
+    //       el.style.display = 'none';
+    //       el.classList.add('hidden');
+    //     }
+    //   });
+    //   const showEl = document.getElementById(panelId);
+    //   if (showEl) {
+    //     showEl.style.display = 'block';
+    //     showEl.classList.remove('hidden');
+    //   }
+
+    //   // 切换左侧导航高亮
+    //   const navBtns = document.querySelectorAll('.glass-nav nav button');
+    //   navBtns.forEach(btn => {
+    //     btn.classList.remove('bg-blue-100', 'text-blue-800', 'font-medium');
+    //     btn.classList.add('text-gray-700');
+    //   });
+    //   // 当前按钮加高亮
+    //   if (panelId === 'mainPanel') {
+    //     navBtns[0].classList.add('bg-blue-100', 'text-blue-800', 'font-medium');
+    //     navBtns[0].classList.remove('text-gray-700');
+    //   } else if (panelId === 'tradingPanel') {
+    //     navBtns[1].classList.add('bg-blue-100', 'text-blue-800', 'font-medium');
+    //     navBtns[1].classList.remove('text-gray-700');
+    //   } else if (panelId === 'portfolioPanel') {
+    //     navBtns[2].classList.add('bg-blue-100', 'text-blue-800', 'font-medium');
+    //     navBtns[2].classList.remove('text-gray-700');
+    //   }
+
+    //   // Initialize charts when main panel is shown
+    //   if (panelId === 'mainPanel') initCharts();
+
+    // }
+
+    // View switching function
+    let lastTradingSubPanel = 'tradingPanel';
+    // function switchPanel(panelId) {
+    //   // Hide all panels including stock detail panel
+    //   ['tradingPanel', 'mainPanel', 'portfolioPanel', 'stockDetailPanel'].forEach(id => {
+    //     const el = document.getElementById(id);
+    //     if (el) {
+    //       el.style.display = 'none';
+    //       el.classList.add('hidden');
+    //     }
+    //   });
+      
+    //   // Show the requested panel
+    //   const showEl = document.getElementById(panelId);
+    //   if (showEl) {
+    //     showEl.style.display = 'block';
+    //     showEl.classList.remove('hidden');
+    //   }
+
+    //   // Update navigation button styles
+    //   const navBtns = document.querySelectorAll('.glass-nav nav button');
+    //   navBtns.forEach(btn => {
+    //     btn.classList.remove('bg-blue-100', 'text-blue-800', 'font-medium');
+    //     btn.classList.add('text-gray-700');
+    //   });
+      
+    //   // Highlight the active button
+    //   if (panelId === 'mainPanel') {
+    //     navBtns[0].classList.add('bg-blue-100', 'text-blue-800', 'font-medium');
+    //     navBtns[0].classList.remove('text-gray-700');
+    //   } else if (panelId === 'tradingPanel') {
+    //     navBtns[1].classList.add('bg-blue-100', 'text-blue-800', 'font-medium');
+    //     navBtns[1].classList.remove('text-gray-700');
+    //   } else if (panelId === 'portfolioPanel') {
+    //     navBtns[2].classList.add('bg-blue-100', 'text-blue-800', 'font-medium');
+    //     navBtns[2].classList.remove('text-gray-700');
+    //   }
+
+    //   // Initialize charts when main panel is shown
+    //   if (panelId === 'mainPanel') initCharts();
+    // }
+
     function switchPanel(panelId) {
-      // 切换内容面板
-      ['tradingPanel', 'mainPanel', 'portfolioPanel'].forEach(id => {
+  // Hide all panels including stock detail panel
+      ['tradingPanel', 'mainPanel', 'portfolioPanel', 'stockDetailPanel'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
           el.style.display = 'none';
           el.classList.add('hidden');
         }
       });
-      const showEl = document.getElementById(panelId);
-      if (showEl) {
-        showEl.style.display = 'block';
-        showEl.classList.remove('hidden');
+      
+      // Special handling for trading panel to remember last sub-panel
+      if (panelId === 'tradingPanel') {
+        // Show the last active sub-panel within trading (main overview or stock detail)
+        const subPanelToShow = document.getElementById(lastTradingSubPanel);
+        if (subPanelToShow) {
+          subPanelToShow.style.display = 'block';
+          subPanelToShow.classList.remove('hidden');
+        }
+      } else {
+        // For all other panels, show the requested panel normally
+        const showEl = document.getElementById(panelId);
+        if (showEl) {
+          showEl.style.display = 'block';
+          showEl.classList.remove('hidden');
+        }
       }
 
-      // 切换左侧导航高亮
+      // Update navigation button styles
       const navBtns = document.querySelectorAll('.glass-nav nav button');
       navBtns.forEach(btn => {
         btn.classList.remove('bg-blue-100', 'text-blue-800', 'font-medium');
         btn.classList.add('text-gray-700');
       });
-      // 当前按钮加高亮
+      
+      // Highlight the active button
       if (panelId === 'mainPanel') {
         navBtns[0].classList.add('bg-blue-100', 'text-blue-800', 'font-medium');
         navBtns[0].classList.remove('text-gray-700');
@@ -952,7 +1045,6 @@
 
       // Initialize charts when main panel is shown
       if (panelId === 'mainPanel') initCharts();
-
     }
 
     // Show search results
@@ -1222,6 +1314,8 @@
 
     // 展示股票详情
     function showStockDetail(symbol) {
+      lastTradingSubPanel = 'stockDetailPanel';
+
       // 隐藏其它panel
       ['tradingPanel', 'mainPanel', 'portfolioPanel'].forEach(id => {
         const el = document.getElementById(id);
@@ -1265,6 +1359,7 @@
 
     // 返回市场概览
     function backToTradingPanel() {
+      lastTradingSubPanel = 'tradingPanel';
       document.getElementById('stockDetailPanel').style.display = 'none';
       document.getElementById('stockDetailPanel').classList.add('hidden');
       document.getElementById('tradingPanel').style.display = 'block';
