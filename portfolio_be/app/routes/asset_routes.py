@@ -38,6 +38,34 @@ def get_total_asset(user_id):
     }), 200
 
 
+# @asset_bp.route("/total/allocation/<int:user_id>", methods=["GET"])  # API 3.4
+# def get_total_asset_allocation(user_id):
+#     date_str = request.args.get("date")
+#     if not date_str or not user_id:
+#         return jsonify({"code": 400, "message": "Invalid user or date."}), 400
+#
+#     try:
+#         total_asset = (
+#             db.session.query(db.func.sum(PortfolioDailyValue.asset_value))
+#             .filter(PortfolioDailyValue.user_id == user_id)
+#             .filter(PortfolioDailyValue.data_date == date_str)
+#             .scalar()
+#         )
+#     except Exception as e:
+#         return jsonify({"code": 500, "message": f"Internal Server Error: {str(e)}"}), 500
+#
+#     if total_asset is None:
+#         return jsonify({"code": 404, "message": "Total asset is not found."}), 404
+#
+#     return jsonify({
+#         "code": 200,
+#         "message": "Successfully retrieved total asset!",
+#         "data": {
+#             "total_asset": f"{total_asset:.2f}"
+#         }
+#     }), 200
+
+
 @asset_bp.route("/search", methods=["POST"])    # API 3.6
 def search_assets():
     content = request.args.get("content", "").strip()

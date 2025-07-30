@@ -29,21 +29,21 @@ python run.py
 
 ## 3 API Interfaces
 
-| **Category**           | **Functionality**               | **Method** | **Url**                                                 | **Description**                                                                                      |
-|------------------------|---------------------------------|------------|---------------------------------------------------------|------------------------------------------------------------------------------------------------------|
-| Home page              | Get user information            | `GET`      | `/api/v1/users/{user_id}`                               | Get user personal information by user ID.                                                            |
-| Home page              | Get total asset                 | `GET`      | `/api/v1/asset/total/{user_id}`                         | Get total asset by user ID.                                                                          |
-| Home page              | Get total profit                | `GET`      | `/api/v1/profit/total/{user_id}`                        | Get total profit by user ID.                                                                         |
-| Home page              | Get total asset allocation      | `GET`      | `/api/v1/asset/total/allocation/{user_id}`              | Get total asset allocation details by user ID.                                                       |
-| Home page              | Get previous profit             | `GET`      | `/api/v1/profit/prev/{user_id}`                         | Get profit of the latest several days by user ID.                                                    |
-| Search page            | Search stocks/cash/bonds/others | `POST`     | `/api/v1/asset/search`                                  | Search asserts(stocks/cash/bonds/others) by content. If content is empty, return all asserts.        |
-| Search page            | Buy assets                      | `POST`     | `/api/v1/asset/buy/{asset_id}/{portfolio_id}/{user_id}` | Buy assets(stocks/cash/bonds) and store in a specific portfolio.                                     |
-| Asset information page | Get details of an asset         | `GET`      | `/api/v1/asset/{asset_id}`                              | Get details of an asset(stock/cash/bond/others) by asset ID.                                         |
-| Asset information page | Get previous price of an asset  | `GET`      | `/api/v1/asset/prev/{asset_id}`                         | Get asset(stock/cash/bond/others) price(high/low/close/open) of the latest several days by asset ID. |
-| Portfolio page         | Get portfolio names             | `GET`      | `/api/v1/portfolio/name/{user_id}`                      | Get portfolio names by user ID.                                                                      |
-| Portfolio page         | Create a portfolio              | `POST`     | `/api/v1/portfolio/create/{user_id}`                    | Create portfolio names by user ID.                                                                   |
-| Portfolio page         | Get details of a portfolio      | `GET`      | `/api/v1/portfolio/{portfolio_id}`                      | Get details of a portfolio by portfolio ID.                                                          |
-| Portfolio page         | Sell assets                     | `POST`     | `/api/v1/asset/sell/{asset_id}/{user_id}`               | Sell assets(stocks/cash/bonds).                                                                      |
+| **Category**           | **Functionality**               | **Method** | **Url**                                                 | **Description**                                                                                                                  |
+|------------------------|---------------------------------|------------|---------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
+| Home page              | Get user information            | `GET`      | `/api/v1/users/{user_id}`                               | Get user personal information by user ID.                                                                                        |
+| Home page              | Get total asset                 | `GET`      | `/api/v1/asset/total/{user_id}`                         | Get total asset by user ID.                                                                                                      |
+| Home page              | Get profit                      | `GET`      | `/api/v1/profit/{user_id}`                              | Get profit by user ID and date. If parameter(portfolio_name) is empty, return total asset. If not empty, return portfolio asset. |
+| Home page              | Get total asset allocation      | `GET`      | `/api/v1/asset/total/allocation/{user_id}`              | Get total asset allocation details by user ID.                                                                                   |
+| Home page              | Get previous profit             | `GET`      | `/api/v1/profit/prev/{user_id}`                         | Get profit of the latest several days by user ID.                                                                                |
+| Search page            | Search stocks/cash/bonds/others | `POST`     | `/api/v1/asset/search`                                  | Search asserts(stocks/cash/bonds/others) by content. If content is empty, return all asserts.                                    |
+| Search page            | Buy assets                      | `POST`     | `/api/v1/asset/buy/{asset_id}/{portfolio_id}/{user_id}` | Buy assets(stocks/cash/bonds) and store in a specific portfolio.                                                                 |
+| Asset information page | Get details of an asset         | `GET`      | `/api/v1/asset/{asset_id}`                              | Get details of an asset(stock/cash/bond/others) by asset ID.                                                                     |
+| Asset information page | Get previous price of an asset  | `GET`      | `/api/v1/asset/prev/{asset_id}`                         | Get asset(stock/cash/bond/others) price(high/low/close/open) of the latest several days by asset ID.                             |
+| Portfolio page         | Get portfolio names             | `GET`      | `/api/v1/portfolio/name/{user_id}`                      | Get portfolio names by user ID.                                                                                                  |
+| Portfolio page         | Create a portfolio              | `POST`     | `/api/v1/portfolio/create/{user_id}`                    | Create portfolio names by user ID.                                                                                               |
+| Portfolio page         | Get details of a portfolio      | `GET`      | `/api/v1/portfolio/{portfolio_id}`                      | Get details of a portfolio by portfolio ID.                                                                                      |
+| Portfolio page         | Sell assets                     | `POST`     | `/api/v1/asset/sell/{asset_id}/{user_id}`               | Sell assets(stocks/cash/bonds).                                                                                                  |
 
 ### 3.1 Get user information
 
@@ -110,7 +110,7 @@ GET /api/v1/asset/total/{user_id}
 ```json
 {
   "code": 400,
-  "message": "Invalid user or date."
+  "message": "Invalid date."
 }
 ```
 
@@ -128,28 +128,29 @@ GET /api/v1/asset/total/{user_id}
 }
 ```
 
-### 3.3 Get total profit
+### 3.3 Get profit
 
 **📍API**
 
 ``` bash
-GET /api/v1/profit/total/{user_id}
+GET /api/v1/profit/{user_id}
 ```
 
 **🧾Request Parameters**
 
-| Parameter | Type | Mandatory | Example      | Description                     |
-|-----------|------|-----------|--------------|---------------------------------|
-| date      | str  | Yes       | '2025-07-29' | User total profit of which date |
+| Parameter      | Type | Mandatory | Example      | Description                     |
+|----------------|------|-----------|--------------|---------------------------------|
+| date           | str  | Yes       | '2023-05-05' | User total profit of which date |
+| portfolio_name | str  | No        | '稳健投资'       | Portfolio name.                 |
 
 **✅ Successful Response**
 
 ```json
 {
   "code": 200,
-  "message": "Successfully retrieved total profit!",
+  "message": "Successfully retrieved profit!",
   "data": {
-    "total_profit": "324.73"
+    "total_profit": "180.00"
   }
 }
 ```
@@ -158,8 +159,8 @@ GET /api/v1/profit/total/{user_id}
 
 ```json
 {
-  "code": 404,
-  "message": "Invalid user or date."
+  "code": 400,
+  "message": "Invalid date."
 }
 ```
 
@@ -221,8 +222,8 @@ GET /api/v1/profit/prev/{user_id}
 
 | Parameter | Type | Mandatory | Example      | Description                       |
 |-----------|------|-----------|--------------|-----------------------------------|
-| fromDate  | str  | Yes       | '2025-07-29' | User total profit from which date |
-| toDate    | str  | Yes       | '2025-07-22' | User total profit to which date   |
+| fromDate  | str  | Yes       | '2025-07-22' | User total profit from which date |
+| toDate    | str  | Yes       | '2025-07-29' | User total profit to which date   |
 
 **✅ Successful Response**
 
