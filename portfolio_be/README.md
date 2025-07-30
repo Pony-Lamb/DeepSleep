@@ -360,14 +360,17 @@ POST /api/v1/asset/search
 **📍API**
 
 ``` bash
-POST /api/v1/asset/buy/{asset_id}/{portfolio_id}/{user_id}
+POST /api/v1/asset/buy/{user_id}
 ```
 
 **🧾Request Parameters**
 
-| Parameter | Type | Mandatory | Example | Description                      |
-|-----------|------|-----------|---------|----------------------------------|
-| num       | int  | Yes       | 10      | How many assets you want to buy? |
+| Parameter      | Type   | Mandatory | Example      | Description                                   |
+|----------------|--------|-----------|--------------|-----------------------------------------------|
+| asset_id       | string | Yes       | XOM          | Which assets you want to buy?                 |
+| portfolio_name | string | Yes       | 长期持有         | Which portfolio you want to put these assets? |
+| num            | int    | Yes       | 10           | How many assets you want to buy?              |
+| date           | str    | Yes       | '2023-05-01' | Today's date.                                 |
 
 **✅ Successful Response**
 
@@ -379,6 +382,20 @@ POST /api/v1/asset/buy/{asset_id}/{portfolio_id}/{user_id}
 ```
 
 **❌ Error Response**
+
+```json
+{
+  "code": 400,
+  "message": "Invalid number of assets."
+}
+```
+
+```json
+{
+  "code": 400,
+  "message": "Insufficient funds."
+}
+```
 
 ```json
 {
@@ -448,45 +465,45 @@ GET /api/v1/asset/prev/{asset_id}
 
 ```json
 {
-    "code": 200,
-    "data": {
-        "close_prices": [
-            "151.80",
-            "153.40",
-            "150.30",
-            "152.50",
-            "153.80"
-        ],
-        "dates": [
-            "2023-05-01",
-            "2023-05-02",
-            "2023-05-03",
-            "2023-05-04",
-            "2023-05-05"
-        ],
-        "high_prices": [
-            "152.75",
-            "154.25",
-            "153.80",
-            "153.20",
-            "154.50"
-        ],
-        "low_prices": [
-            "149.25",
-            "151.50",
-            "149.75",
-            "150.20",
-            "152.20"
-        ],
-        "open_prices": [
-            "150.50",
-            "152.00",
-            "153.20",
-            "150.80",
-            "152.80"
-        ]
-    },
-    "message": "Successfully retrieved previous asset price!"
+  "code": 200,
+  "data": {
+    "close_prices": [
+      "151.80",
+      "153.40",
+      "150.30",
+      "152.50",
+      "153.80"
+    ],
+    "dates": [
+      "2023-05-01",
+      "2023-05-02",
+      "2023-05-03",
+      "2023-05-04",
+      "2023-05-05"
+    ],
+    "high_prices": [
+      "152.75",
+      "154.25",
+      "153.80",
+      "153.20",
+      "154.50"
+    ],
+    "low_prices": [
+      "149.25",
+      "151.50",
+      "149.75",
+      "150.20",
+      "152.20"
+    ],
+    "open_prices": [
+      "150.50",
+      "152.00",
+      "153.20",
+      "150.80",
+      "152.80"
+    ]
+  },
+  "message": "Successfully retrieved previous asset price!"
 }
 ```
 
@@ -618,23 +635,23 @@ GET /api/v1/portfolio/details
 
 ```json
 {
-    "code": 200,
-    "data": [
-        {
-            "asset_id": "AMZN",
-            "quantity": 40
-        },
-        {
-            "asset_id": "XOM",
-            "quantity": 60
-        },
-        {
-            "asset_id": "JNJ",
-            "quantity": 50
-        }
-    ],
-    "len": 3,
-    "message": "Successfully retrieved portfolio information!"
+  "code": 200,
+  "data": [
+    {
+      "asset_id": "AMZN",
+      "quantity": 40
+    },
+    {
+      "asset_id": "XOM",
+      "quantity": 60
+    },
+    {
+      "asset_id": "JNJ",
+      "quantity": 50
+    }
+  ],
+  "len": 3,
+  "message": "Successfully retrieved portfolio information!"
 }
 ```
 

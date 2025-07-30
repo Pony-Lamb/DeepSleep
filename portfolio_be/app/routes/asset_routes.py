@@ -4,6 +4,8 @@ from sqlalchemy import or_
 
 from app.models.asset import Asset, PortfolioDailyValue
 from app import db
+from app.models.portfolio import Portfolio
+from app.models.user import User
 
 asset_bp = Blueprint('asset', __name__)
 
@@ -73,6 +75,53 @@ def search_assets():
         }), 200
 
     except Exception as e:
+        return jsonify({"code": 500, "message": f"Internal Server Error: {str(e)}"}), 500
+
+
+@asset_bp.route("/buy/<int:user_id>", methods=["POST"])  # API 3.7
+def buy_asset(user_id):
+    try:
+        asset_id = request.args.get("asset_id")
+        portfolio_name = request.args.get("portfolio_name")
+        today = request.args.get("date")
+        num = request.args.get("num")
+        num = int(num)
+        if num is None or num <= 0:
+            return jsonify({"code": 400, "message": "Invalid number of assets."}), 400
+
+        asset = Asset.query.filter_by(asset_id=asset_id, data_date=today).first()
+        if not asset:
+            return jsonify({"code": 404, "message": "Asset not found for today."}), 404
+
+        cost = asset.open_price * num
+        user = User.query.filter_by(user_id=user_id).first()
+        if not user or user.available_funds < cost:
+            return jsonify({"code": 400, "message": "Insufficient funds."}), 400
+
+        existing = Portfolio.query.filter_by(
+            portfolio_name=portfolio_name,
+            user_id=user_id,
+            asset_id=asset_id
+        ).first()
+
+        if existing:
+            existing.quantity += num
+        else:
+            new_record = Portfolio(
+                portfolio_name=portfolio_name,
+                user_id=user_id,
+                asset_id=asset_id,
+                quantity=num
+            )
+            db.session.add(new_record)
+
+        user.available_funds -= cost
+        db.session.commit()
+
+        return jsonify({"code": 200, "message": "Successfully buy assets!"}), 200
+
+    except Exception as e:
+        db.session.rollback()
         return jsonify({"code": 500, "message": f"Internal Server Error: {str(e)}"}), 500
 
 
