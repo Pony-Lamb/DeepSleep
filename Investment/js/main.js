@@ -294,7 +294,7 @@ document.addEventListener('click', function (e) {
 async function getRealStockData(symbol) {
   try {
     // real api url
-    const response = await fetch(`http://127.0.0.1:5000/v1/asset/${symbol}`);
+    const response = await fetch(`http://192.168.1.101:5000/api/v1/asset/prev/${symbol}?fromDate=2025-05-01&toDate=2025-07-30`);
 
     console.log("reponse: ", response);
     
@@ -346,6 +346,19 @@ async function showStockDetail(symbol) {
     if (myChart) {
       myChart.resize();
       updateChart(30);
+      const periodButtons = document.querySelectorAll('[data-days]');
+        periodButtons.forEach(button => {
+          const days = parseInt(button.getAttribute('data-days'));
+          if (days === 30) {
+            // Highlight the 30-day button
+            button.classList.remove('inactive-period');
+            button.classList.add('active-period');
+          } else {
+            // Make other buttons inactive
+            button.classList.remove('active-period');
+            button.classList.add('inactive-period');
+          }
+        });
     }
   }, 100);
 }
@@ -481,27 +494,76 @@ var current_details = {
   timestamps: []
 }
 
+// function extractStockData(days = 30) {
+
+//   console.log("extracting stock data")
+//   const result = [];
+
+//   const startIndex = Math.max(0, current_details.timestamps.length - days);
+
+//   for (let i = startIndex; i < current_details.timestamps.length; i++) {
+//     const timestamp = current_details.timestamps[i];
+//     const date = new Date(timestamp);
+//     const dateStr = `${date.getMonth() + 1}/${date.getDate()}`;
+
+//     result.push([
+//       dateStr,
+//       parseFloat(current_details.open[i].toFixed(2)),
+//       parseFloat(current_details.close[i].toFixed(2)),
+//       parseFloat(current_details.low[i].toFixed(2)),
+//       parseFloat(current_details.high[i].toFixed(2)),
+//     ]);
+//   }
+
+//   return result;
+// }
+
 function extractStockData(days = 30) {
-
-  console.log("extracting stock data")
-  const result = [];
-
-  const startIndex = Math.max(0, current_details.timestamps.length - days);
-
-  for (let i = startIndex; i < current_details.timestamps.length; i++) {
-    const timestamp = current_details.timestamps[i];
-    const date = new Date(timestamp);
-    const dateStr = `${date.getMonth() + 1}/${date.getDate()}`;
-
-    result.push([
-      dateStr,
-      parseFloat(current_details.open[i].toFixed(2)),
-      parseFloat(current_details.close[i].toFixed(2)),
-      parseFloat(current_details.low[i].toFixed(2)),
-      parseFloat(current_details.high[i].toFixed(2)),
-    ]);
+  console.log("extracting stock data for", days, "days");
+  
+  // Check if we have valid data
+  if (!current_details || !current_details.data) {
+    console.error("Invalid data structure in current_details");
+    return [];
   }
 
+  const result = [];
+  const data = current_details.data;
+  
+  // Get the latest date from the data
+  const totalPoints = data.dates.length;
+  if (totalPoints === 0) {
+    return [];
+  }
+  
+  // Get the end date (latest date in the data)
+  const endDate = new Date(data.dates[totalPoints - 1]);
+  
+  // Calculate start date (days ago from end date)
+  const startDate = new Date(endDate);
+  startDate.setDate(startDate.getDate() - days);
+  
+  console.log("Date range:", startDate.toISOString().split('T')[0], "to", endDate.toISOString().split('T')[0]);
+
+  // Filter data within the date range
+  for (let i = 0; i < totalPoints; i++) {
+    const currentDate = new Date(data.dates[i]);
+    
+    // Check if current date is within our range
+    if (currentDate >= startDate && currentDate <= endDate) {
+      const formattedDate = `${currentDate.getMonth() + 1}/${currentDate.getDate()}`;
+      
+      result.push([
+        formattedDate,
+        parseFloat(data.open_prices[i]),
+        parseFloat(data.close_prices[i]),
+        parseFloat(data.low_prices[i]),
+        parseFloat(data.high_prices[i])
+      ]);
+    }
+  }
+
+  console.log("Extracted", result.length, "data points within date range");
   return result;
 }
 
@@ -638,7 +700,7 @@ function updateChart(days) {
   myChart.setOption(option);
 }
 
-updateChart(30);
+// updateChart(30);
 
 // Window resize event - 这个功能已经在上面处理了
 
