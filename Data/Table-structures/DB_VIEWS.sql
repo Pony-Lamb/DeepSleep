@@ -32,6 +32,7 @@ ON A.asset_id = C.asset_id
 GROUP BY B.user_name, A.portfolio_name, data_date
 
 #视图-全表，仅查询数据结构，按需使用
+CREATE VIEW full_table AS
 SELECT *
 FROM portfolio A
 LEFT JOIN user_info B
@@ -45,4 +46,21 @@ SELECT DISTINCT A.user_id,
 	   B.portfolio_name
 FROM user_info A, portfolio B
 WHERE A.user_id = B.user_id
+
+#视图-全类资产价值表
+CREATE VIEW full_asset_value AS
+SELECT B.user_id,
+	   B.user_name,
+	   A.portfolio_name,
+	   C.asset_id,
+	   C.asset_name,
+       C.open_price,
+       C.category,
+       C.data_date,	   
+	   (C.open_price * A.quantity) AS asset_value
+FROM portfolio A
+LEFT JOIN user_info B
+ON A.user_id = B.user_id
+LEFT JOIN assets C
+ON A.asset_id = C.asset_id;
 
