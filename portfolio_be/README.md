@@ -109,8 +109,15 @@ GET /api/v1/asset/total/{user_id}
 
 ```json
 {
-  "code": 404,
+  "code": 400,
   "message": "Invalid user or date."
+}
+```
+
+```json
+{
+  "code": 404,
+  "message": "Total asset is not found."
 }
 ```
 
@@ -336,15 +343,15 @@ POST /api/v1/asset/search
 
 ```json
 {
-  "code": 500,
-  "message": "Internal Server Error."
+  "code": 400,
+  "message": "Invalid date."
 }
 ```
 
 ```json
 {
-  "code": 404,
-  "message": "Invalid user."
+  "code": 500,
+  "message": "Internal Server Error."
 }
 ```
 
@@ -410,7 +417,7 @@ GET /api/v1/asset/{asset_id}
 
 ```json
 {
-  "code": 404,
+  "code": 400,
   "message": "Invalid asset ID."
 }
 ```
@@ -441,55 +448,45 @@ GET /api/v1/asset/prev/{asset_id}
 
 ```json
 {
-  "code": 200,
-  "message": "Successfully retrieved previous asset price!",
-  "data": {
-    "dates": [
-      "2025-07-23",
-      "2025-07-24",
-      "2025-07-25",
-      "2025-07-26",
-      "2025-07-27",
-      "2025-07-28",
-      "2025-07-29"
-    ],
-    "high_prices": [
-      "31.83",
-      "31.01",
-      "29.57",
-      "30.20",
-      "31.92",
-      "32.50",
-      "32.83"
-    ],
-    "low_prices": [
-      "31.83",
-      "31.01",
-      "29.57",
-      "30.20",
-      "31.92",
-      "32.50",
-      "32.83"
-    ],
-    "close_prices": [
-      "31.83",
-      "31.01",
-      "29.57",
-      "30.20",
-      "31.92",
-      "32.50",
-      "32.83"
-    ],
-    "open_prices": [
-      "31.83",
-      "31.01",
-      "29.57",
-      "30.20",
-      "31.92",
-      "32.50",
-      "32.83"
-    ]
-  }
+    "code": 200,
+    "data": {
+        "close_prices": [
+            "151.80",
+            "153.40",
+            "150.30",
+            "152.50",
+            "153.80"
+        ],
+        "dates": [
+            "2023-05-01",
+            "2023-05-02",
+            "2023-05-03",
+            "2023-05-04",
+            "2023-05-05"
+        ],
+        "high_prices": [
+            "152.75",
+            "154.25",
+            "153.80",
+            "153.20",
+            "154.50"
+        ],
+        "low_prices": [
+            "149.25",
+            "151.50",
+            "149.75",
+            "150.20",
+            "152.20"
+        ],
+        "open_prices": [
+            "150.50",
+            "152.00",
+            "153.20",
+            "150.80",
+            "152.80"
+        ]
+    },
+    "message": "Successfully retrieved previous asset price!"
 }
 ```
 
@@ -497,8 +494,22 @@ GET /api/v1/asset/prev/{asset_id}
 
 ```json
 {
-  "code": 404,
+  "code": 400,
   "message": "Invalid asset ID or date."
+}
+```
+
+```json
+{
+  "code": 400,
+  "message": "Invalid date format. Use YYYY-MM-DD."
+}
+```
+
+```json
+{
+  "code": 404,
+  "message": "No asset data found."
 }
 ```
 
@@ -607,18 +618,23 @@ GET /api/v1/portfolio/details
 
 ```json
 {
-  "code": 200,
-  "message": "Successfully retrieved portfolio information!",
-  "data": [
-    {
-      "asset_id": "AAPL",
-      "quantity": 10
-    },
-    {
-      "asset_id": "TSLA",
-      "quantity": 30
-    }
-  ]
+    "code": 200,
+    "data": [
+        {
+            "asset_id": "AMZN",
+            "quantity": 40
+        },
+        {
+            "asset_id": "XOM",
+            "quantity": 60
+        },
+        {
+            "asset_id": "JNJ",
+            "quantity": 50
+        }
+    ],
+    "len": 3,
+    "message": "Successfully retrieved portfolio information!"
 }
 ```
 

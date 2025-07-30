@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Blueprint, request, jsonify
 from sqlalchemy import or_
 
@@ -24,7 +25,7 @@ def get_total_asset(user_id):
         return jsonify({"code": 500, "message": f"Internal Server Error: {str(e)}"}), 500
 
     if total_asset is None:
-        return jsonify({"code": 404, "message": "Invalid user or date."}), 404
+        return jsonify({"code": 404, "message": "Total asset is not found."}), 404
 
     return jsonify({
         "code": 200,
@@ -99,3 +100,42 @@ def get_asset_detail(asset_id):
             "category": result.category
         }
     }), 200
+
+
+@asset_bp.route('/prev/<string:asset_id>', methods=['GET'])    # API 3.9
+def get_previous_asset_prices(asset_id):
+    from_date_str = request.args.get("fromDate")
+    to_date_str = request.args.get("toDate")
+
+    if not asset_id or not from_date_str or not to_date_str:
+        return jsonify({"code": 400, "message": "Invalid asset ID or date.."}), 400
+
+    try:
+        from_date = datetime.strptime(from_date_str, "%Y-%m-%d").date()
+        to_date = datetime.strptime(to_date_str, "%Y-%m-%d").date()
+    except ValueError:
+        return jsonify({"code": 400, "message": "Invalid date format. Use YYYY-MM-DD."}), 400
+
+    assets = Asset.query.filter(
+        Asset.asset_id == asset_id,
+        Asset.data_date >= from_date,
+        Asset.data_date <= to_date
+    ).order_by(Asset.data_date).all()
+
+    if not assets:
+        return jsonify({"code": 404, "message": "No asset data found."}), 404
+
+    data = {
+        "dates": [a.data_date.strftime("%Y-%m-%d") for a in assets],
+        "high_prices": [f"{a.high_price:.2f}" for a in assets],
+        "low_prices": [f"{a.low_price:.2f}" for a in assets],
+        "close_prices": [f"{a.close_price:.2f}" for a in assets],
+        "open_prices": [f"{a.open_price:.2f}" for a in assets],
+    }
+
+    return jsonify({
+        "code": 200,
+        "message": "Successfully retrieved previous asset price!",
+        "data": data
+    }), 200
+

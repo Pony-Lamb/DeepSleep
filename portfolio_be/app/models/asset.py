@@ -5,7 +5,8 @@ db = db_connection.db
 
 class Asset(db.Model):
     __tablename__ = "assets"
-    asset_id = db.Column(db.String(50), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    asset_id = db.Column(db.String(50))
     asset_name = db.Column(db.String(100))
     open_price = db.Column(db.Float)
     high_price = db.Column(db.Float)
