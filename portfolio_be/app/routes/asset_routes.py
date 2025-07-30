@@ -35,7 +35,7 @@ def get_total_asset(user_id):
     }), 200
 
 
-@asset_bp.route("/search", methods=["POST"])
+@asset_bp.route("/search", methods=["POST"])    # API 3.6
 def search_assets():
     content = request.args.get("content", "").strip()
     date_str = request.args.get("date")

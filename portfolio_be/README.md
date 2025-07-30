@@ -265,70 +265,70 @@ POST /api/v1/asset/search
 
 ```json
 {
-    "code": 200,
-    "data": [
-        {
-            "asset_id": "AAPL",
-            "category": "科技",
-            "close_price": "151.80",
-            "data_date": "2023-05-01",
-            "high_price": "152.75",
-            "low_price": "149.25",
-            "name": "苹果公司",
-            "open_price": "150.50"
-        },
-        {
-            "asset_id": "GOOGL",
-            "category": "科技",
-            "close_price": "106.30",
-            "data_date": "2023-05-01",
-            "high_price": "107.20",
-            "low_price": "104.50",
-            "name": "谷歌A类股",
-            "open_price": "105.75"
-        },
-        {
-            "asset_id": "TSLA",
-            "category": "科技",
-            "close_price": "166.75",
-            "data_date": "2023-05-01",
-            "high_price": "168.90",
-            "low_price": "162.30",
-            "name": "特斯拉",
-            "open_price": "165.40"
-        },
-        {
-            "asset_id": "NVDA",
-            "category": "科技",
-            "close_price": "273.25",
-            "data_date": "2023-05-01",
-            "high_price": "275.80",
-            "low_price": "268.40",
-            "name": "英伟达",
-            "open_price": "270.60"
-        },
-        {
-            "asset_id": "BAC",
-            "category": "金融",
-            "close_price": "32.60",
-            "data_date": "2023-05-01",
-            "high_price": "32.90",
-            "low_price": "32.10",
-            "name": "美国银行",
-            "open_price": "32.45"
-        },
-        {
-            "asset_id": "AMZN",
-            "category": "消费",
-            "close_price": "111.75",
-            "data_date": "2023-05-01",
-            "high_price": "112.40",
-            "low_price": "109.50",
-            "name": "亚马逊",
-            "open_price": "110.30"
-        }
-    ],
-    "message": "Successfully searched!"
+  "code": 200,
+  "data": [
+    {
+      "asset_id": "AAPL",
+      "category": "科技",
+      "close_price": "151.80",
+      "data_date": "2023-05-01",
+      "high_price": "152.75",
+      "low_price": "149.25",
+      "name": "苹果公司",
+      "open_price": "150.50"
+    },
+    {
+      "asset_id": "GOOGL",
+      "category": "科技",
+      "close_price": "106.30",
+      "data_date": "2023-05-01",
+      "high_price": "107.20",
+      "low_price": "104.50",
+      "name": "谷歌A类股",
+      "open_price": "105.75"
+    },
+    {
+      "asset_id": "TSLA",
+      "category": "科技",
+      "close_price": "166.75",
+      "data_date": "2023-05-01",
+      "high_price": "168.90",
+      "low_price": "162.30",
+      "name": "特斯拉",
+      "open_price": "165.40"
+    },
+    {
+      "asset_id": "NVDA",
+      "category": "科技",
+      "close_price": "273.25",
+      "data_date": "2023-05-01",
+      "high_price": "275.80",
+      "low_price": "268.40",
+      "name": "英伟达",
+      "open_price": "270.60"
+    },
+    {
+      "asset_id": "BAC",
+      "category": "金融",
+      "close_price": "32.60",
+      "data_date": "2023-05-01",
+      "high_price": "32.90",
+      "low_price": "32.10",
+      "name": "美国银行",
+      "open_price": "32.45"
+    },
+    {
+      "asset_id": "AMZN",
+      "category": "消费",
+      "close_price": "111.75",
+      "data_date": "2023-05-01",
+      "high_price": "112.40",
+      "low_price": "109.50",
+      "name": "亚马逊",
+      "open_price": "110.30"
+    }
+  ],
+  "message": "Successfully searched!"
 }
 ```
 
@@ -396,13 +396,13 @@ GET /api/v1/asset/{asset_id}
 
 ```json
 {
-    "code": 200,
-    "data": {
-        "asset_id": "AAPL",
-        "category": "科技",
-        "name": "苹果公司"
-    },
-    "message": "Successfully retrieved asset information!"
+  "code": 200,
+  "data": {
+    "asset_id": "AAPL",
+    "category": "科技",
+    "name": "苹果公司"
+  },
+  "message": "Successfully retrieved asset information!"
 }
 ```
 
@@ -518,14 +518,14 @@ GET /api/v1/portfolio/name/{user_id}
 
 ```json
 {
-    "code": 200,
-    "data": {
-        "portfolios": [
-            "科技爱好者",
-            "稳健投资"
-        ]
-    },
-    "message": "Successfully retrieved portfolio names!"
+  "code": 200,
+  "data": {
+    "portfolios": [
+      "科技爱好者",
+      "稳健投资"
+    ]
+  },
+  "message": "Successfully retrieved portfolio names!"
 }
 ```
 
@@ -533,7 +533,7 @@ GET /api/v1/portfolio/name/{user_id}
 
 ```json
 {
-  "code": 404,
+  "code": 400,
   "message": "Invalid user."
 }
 ```
@@ -570,6 +570,20 @@ POST /api/v1/portfolio/create/{user_id}
 
 ```json
 {
+  "code": 400,
+  "message": "Invalid user ID or portfolio name."
+}
+```
+
+```json
+{
+  "code": 400,
+  "message": "Portfolio with this name already exists for the user."
+}
+```
+
+```json
+{
   "code": 500,
   "message": "Internal Server Error."
 }
@@ -580,12 +594,14 @@ POST /api/v1/portfolio/create/{user_id}
 **📍API**
 
 ``` bash
-GET /api/v1/portfolio/{portfolio_id}
+GET /api/v1/portfolio/details
 ```
 
 **🧾Request Parameters**
 
-*None*
+| Parameter | Type | Mandatory | Example | Description     |
+|-----------|------|-----------|---------|-----------------|
+| name      | str  | Yes       | '长期持有'  | Portfolio name. |
 
 **✅ Successful Response**
 
@@ -595,14 +611,10 @@ GET /api/v1/portfolio/{portfolio_id}
   "message": "Successfully retrieved portfolio information!",
   "data": [
     {
-      "portfolio_name": "portfolio_A",
-      "user_id": 1,
       "asset_id": "AAPL",
       "quantity": 10
     },
     {
-      "portfolio_name": "portfolio_A",
-      "user_id": 1,
       "asset_id": "TSLA",
       "quantity": 30
     }
@@ -614,8 +626,8 @@ GET /api/v1/portfolio/{portfolio_id}
 
 ```json
 {
-  "code": 404,
-  "message": "Invalid portfolio ID."
+  "code": 400,
+  "message": "Invalid portfolio name."
 }
 ```
 

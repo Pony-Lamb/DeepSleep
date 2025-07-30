@@ -5,7 +5,8 @@ db = db_connection.db
 
 class Portfolio(db.Model):
     __tablename__ = 'portfolio'
-    portfolio_name = db.Column(db.String(100), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    portfolio_name = db.Column(db.String(100))
     user_id = db.Column(db.Integer)
     asset_id = db.Column(db.String(50))
     quantity = db.Column(db.Integer)
