@@ -674,9 +674,11 @@ POST /api/v1/asset/sell/{asset_id}/{user_id}
 
 **🧾Request Parameters**
 
-| Parameter | Type | Mandatory | Example | Description                       |
-|-----------|------|-----------|---------|-----------------------------------|
-| num       | int  | Yes       | 10      | How many assets you want to sell? |
+| Parameter | Type   | Mandatory | Example      | Description                       |
+|-----------|--------|-----------|--------------|-----------------------------------|
+| asset_id  | string | Yes       | XOM          | Which assets you want to sell?    |
+| num       | int    | Yes       | 10           | How many assets you want to sell? |
+| date      | str    | Yes       | '2023-05-01' | Today's date.                     |
 
 **✅ Successful Response**
 
@@ -688,6 +690,34 @@ POST /api/v1/asset/sell/{asset_id}/{user_id}
 ```
 
 **❌ Error Response**
+
+```json
+{
+  "code": 400,
+  "message": "Internal Server Error."
+}
+```
+
+```json
+{
+  "code": 400,
+  "message": "Invalid number of assets."
+}
+```
+
+```json
+{
+  "code": 404,
+  "message": "Asset not found."
+}
+```
+
+```json
+{
+  "code": 404,
+  "message": "No such asset in your portfolio."
+}
+```
 
 ```json
 {

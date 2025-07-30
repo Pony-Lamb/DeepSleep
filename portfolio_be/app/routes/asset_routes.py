@@ -91,7 +91,7 @@ def buy_asset(user_id):
 
         asset = Asset.query.filter_by(asset_id=asset_id, data_date=today).first()
         if not asset:
-            return jsonify({"code": 404, "message": "Asset not found for today."}), 404
+            return jsonify({"code": 404, "message": "Asset not found."}), 404
 
         cost = asset.open_price * num
         user = User.query.filter_by(user_id=user_id).first()
@@ -187,4 +187,43 @@ def get_previous_asset_prices(asset_id):
         "message": "Successfully retrieved previous asset price!",
         "data": data
     }), 200
+
+
+@asset_bp.route("/sell/<int:user_id>", methods=["POST"])  # API 3.13
+def sell_asset(user_id):
+    try:
+        asset_id = request.args.get("asset_id")
+        num = request.args.get("num")
+        num = int(num)
+        today = request.args.get("date")
+        if num is None or num <= 0:
+            return jsonify({"code": 400, "message": "Invalid number of assets."}), 400
+
+        asset = Asset.query.filter_by(asset_id=asset_id, data_date=today).first()
+        if not asset:
+            return jsonify({"code": 404, "message": "Asset not found."}), 404
+
+        holding = Portfolio.query.filter_by(user_id=user_id, asset_id=asset_id).first()
+        if not holding:
+            return jsonify({"code": 404, "message": "No such asset in your portfolio."}), 404
+
+        if holding.quantity < num:
+            return jsonify({"code": 400, "message": "Not enough quantity to sell."}), 400
+
+        if holding.quantity == num:
+            db.session.delete(holding)
+        else:
+            holding.quantity -= num
+
+        revenue = asset.close_price * num
+        user = User.query.filter_by(user_id=user_id).first()
+        user.available_funds += revenue
+
+        db.session.commit()
+
+        return jsonify({"code": 200, "message": "Successfully sell assets!"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"code": 500, "message": f"Internal Server Error: {str(e)}"}), 500
 
