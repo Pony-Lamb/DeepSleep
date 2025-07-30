@@ -331,11 +331,11 @@ async function showStockDetail(symbol) {
     document.getElementById('detail-stock-symbol').textContent = stock.symbol;
     document.getElementById('detail-stock-price').textContent = stock.price.toFixed(2);
     const changeDiv = document.getElementById('detail-stock-change');
-    if (stock.change >= 0) {
-      changeDiv.innerHTML = `<iconify-icon icon="mdi:trending-up" class="text-green-500 mr-1"></iconify-icon>
+    if (stock.change < 0) {
+      changeDiv.innerHTML = `<iconify-icon icon="mdi:trending-down" class="text-green-500 mr-1"></iconify-icon>
         <span class="text-green-600 font-bold">+${stock.change}%</span>`;
     } else {
-      changeDiv.innerHTML = `<iconify-icon icon="mdi:trending-down" class="text-red-500 mr-1"></iconify-icon>
+      changeDiv.innerHTML = `<iconify-icon icon="mdi:trending-up" class="text-red-500 mr-1"></iconify-icon>
         <span class="text-red-600 font-bold">${stock.change}%</span>`;
     }
   }
@@ -576,10 +576,10 @@ function updateChart(days) {
         type: 'candlestick',
         data: stockData.map(item => [item[1], item[2], item[3], item[4]]),
         itemStyle: {
-          color: '#10B981',
-          color0: '#EF4444',
-          borderColor: '#10B981',
-          borderColor0: '#EF4444',
+          color: '#EF4444',
+          color0: '#10B981',
+          borderColor: '#EF4444',
+          borderColor0: '#10B981',
         },
         emphasis: {
           itemStyle: {

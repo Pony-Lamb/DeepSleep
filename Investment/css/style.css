@@ -3,8 +3,8 @@
 :root {
   --primary: #1E3A8A;
   --background: #F8FAFC;
-  --positive: #10B981;
-  --negative: #EF4444;
+  --positive: #EF4444;
+  --negative: #10B981;
   --action: #3B82F6;
   --divider: #E2E8F0;
 }
@@ -181,7 +181,7 @@ body {
 
 /* Text color utilities */
 .text-rise {
-  color: #10b981;
+  color: #EF4444;
 }
 
 .bg-rise\/10 {
