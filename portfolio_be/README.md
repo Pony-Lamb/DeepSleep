@@ -222,26 +222,27 @@ GET /api/v1/profit/prev/{user_id}
 
 | Parameter | Type | Mandatory | Example      | Description                       |
 |-----------|------|-----------|--------------|-----------------------------------|
-| fromDate  | str  | Yes       | '2025-07-22' | User total profit from which date |
-| toDate    | str  | Yes       | '2025-07-29' | User total profit to which date   |
+| fromDate  | str  | Yes       | '2023-05-04' | User total profit from which date |
+| toDate    | str  | Yes       | '2023-05-05' | User total profit to which date   |
 
 **✅ Successful Response**
 
 ```json
 {
   "code": 200,
-  "message": "Successfully retrieved previous profit!",
   "data": {
+    "dates": [
+      "2023-05-03",
+      "2023-05-04",
+      "2023-05-05"
+    ],
     "profits": [
-      "31.83",
-      "22.33",
-      "-25.55",
-      "1.11",
-      "63.99",
-      "-32.00",
-      "24.36"
+      "172.00",
+      "-543.00",
+      "370.00"
     ]
-  }
+  },
+  "message": "Successfully retrieved profit!"
 }
 ```
 
@@ -249,8 +250,8 @@ GET /api/v1/profit/prev/{user_id}
 
 ```json
 {
-  "code": 404,
-  "message": "Invalid user or date."
+  "code": 400,
+  "message": "Invalid date."
 }
 ```
 
