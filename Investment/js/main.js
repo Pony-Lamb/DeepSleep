@@ -291,10 +291,35 @@ document.addEventListener('click', function (e) {
 
 // Initialize chart if main panel is visible on load - 这个功能已经在appInit中处理了
 
+async function getRealStockData(symbol) {
+  try {
+    // real api url
+    const response = await fetch(`http://127.0.0.1:5000/v1/asset/${symbol}`);
+
+    console.log("reponse: ", response);
+    
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    return data;
+
+  } catch (error) {
+    console.error('Failed to fetch stock data:', error);
+    return null;
+  }
+}
+
 // 展示股票详情
-function showStockDetail(symbol) {
+async function showStockDetail(symbol) {
   // 统一用switchPanel切换面板
   switchPanel('stockDetailPanel');
+
+  current_details = await getRealStockData(symbol);
+  console.log("Successfully fetched stock data.");
+  console.log("current_details: ", current_details);
 
   // 查找数据
   const stock = stockDetailData.find(s => s.symbol === symbol);
@@ -446,6 +471,40 @@ function calculateYAxisRange(data) {
   return [Math.floor(min - padding), Math.ceil(max + padding)];
 }
 
+var current_details = {
+  symbol: "SYMBOL",
+  name: "Stock Name",
+  open: [],
+  close: [],
+  high: [],
+  low: [],
+  timestamps: []
+}
+
+function extractStockData(days = 30) {
+
+  console.log("extracting stock data")
+  const result = [];
+
+  const startIndex = Math.max(0, current_details.timestamps.length - days);
+
+  for (let i = startIndex; i < current_details.timestamps.length; i++) {
+    const timestamp = current_details.timestamps[i];
+    const date = new Date(timestamp);
+    const dateStr = `${date.getMonth() + 1}/${date.getDate()}`;
+
+    result.push([
+      dateStr,
+      parseFloat(current_details.open[i].toFixed(2)),
+      parseFloat(current_details.close[i].toFixed(2)),
+      parseFloat(current_details.low[i].toFixed(2)),
+      parseFloat(current_details.high[i].toFixed(2)),
+    ]);
+  }
+
+  return result;
+}
+
 function updateChart(days) {
   // 确保myChart已初始化
   if (!myChart) {
@@ -456,7 +515,8 @@ function updateChart(days) {
     return;
   }
   const effectiveDays = Math.min(days, 90);
-  const stockData = generateStockData(effectiveDays);
+  // const stockData = generateStockData(effectiveDays);
+  const stockData = extractStockData(effectiveDays);
   const bollingerData = calculateBollingerBands(stockData);
   const [yMin, yMax] = calculateYAxisRange(stockData);
 
