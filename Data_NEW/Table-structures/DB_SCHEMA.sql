@@ -1,3 +1,4 @@
+DROP DATABASE IF EXISTS DeepSleep;
 CREATE DATABASE DeepSleep;
 USE DeepSleep;
 
@@ -23,6 +24,7 @@ CREATE TABLE portfolio (
     user_id INT NOT NULL,
     asset_id VARCHAR(50),
     quantity INT,
+	portfolio_date DATE,
     PRIMARY KEY (id)
 );
 
