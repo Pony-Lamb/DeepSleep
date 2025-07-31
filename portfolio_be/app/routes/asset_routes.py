@@ -1,11 +1,12 @@
 from datetime import datetime
 from flask import Blueprint, request, jsonify
-from sqlalchemy import or_
+from sqlalchemy import or_, text
 
 from app.models.asset import Asset, PortfolioDailyValue
 from app import db
 from app.models.portfolio import Portfolio
 from app.models.user import User
+from app.utils.load_sql_file import load_sql
 
 asset_bp = Blueprint('asset', __name__)
 
@@ -38,32 +39,37 @@ def get_total_asset(user_id):
     }), 200
 
 
-# @asset_bp.route("/total/allocation/<int:user_id>", methods=["GET"])  # API 3.4
-# def get_total_asset_allocation(user_id):
-#     date_str = request.args.get("date")
-#     if not date_str or not user_id:
-#         return jsonify({"code": 400, "message": "Invalid user or date."}), 400
-#
-#     try:
-#         total_asset = (
-#             db.session.query(db.func.sum(PortfolioDailyValue.asset_value))
-#             .filter(PortfolioDailyValue.user_id == user_id)
-#             .filter(PortfolioDailyValue.data_date == date_str)
-#             .scalar()
-#         )
-#     except Exception as e:
-#         return jsonify({"code": 500, "message": f"Internal Server Error: {str(e)}"}), 500
-#
-#     if total_asset is None:
-#         return jsonify({"code": 404, "message": "Total asset is not found."}), 404
-#
-#     return jsonify({
-#         "code": 200,
-#         "message": "Successfully retrieved total asset!",
-#         "data": {
-#             "total_asset": f"{total_asset:.2f}"
-#         }
-#     }), 200
+@asset_bp.route("/total/allocation/<int:user_id>", methods=["GET"])  # API 3.4
+def get_total_asset_allocation(user_id):
+    date_str = request.args.get("date")
+    if not date_str or not user_id:
+        return jsonify({"code": 400, "message": "Invalid user or date."}), 400
+
+    try:
+        sql = load_sql("app/sql/asset_allocation.sql")
+        sql_text = text(sql)
+        params = {
+            "date": date_str,
+            "user_id": user_id
+        }
+
+        result = db.session.execute(sql_text, params).mappings().all()
+        category, asset = [], []
+        if result:
+            for r in result:
+                category.append(r.category)
+                asset.append(f"{r.market_value:.2f}")
+
+        return jsonify({
+            "code": 200,
+            "message": "Successfully retrieved total asset allocation!",
+            "data": {
+                "asset_type": category,
+                "asset_total_price": asset
+            }
+        })
+    except Exception as e:
+        return jsonify({"code": 500, "message": f"Internal Server Error: {str(e)}"}), 500
 
 
 @asset_bp.route("/search", methods=["POST"])    # API 3.6
