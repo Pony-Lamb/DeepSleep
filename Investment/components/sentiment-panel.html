@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Daily Sentiment Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #f0f4f8, #ffffff);
+      margin: 0;
+      padding: 2rem;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      color: #222;
+      margin-bottom: 2rem;
+    }
+    .section {
+      margin-bottom: 3rem;
+    }
+    .section h2 {
+      text-align: center;
+      color: #444;
+      margin-bottom: 1.5rem;
+    }
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+    }
+    .card {
+      background-color: #ffffff;
+      border-radius: 16px;
+      padding: 1.5rem;
+      width: 320px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: #222;
+    }
+    .score {
+      font-size: 0.95rem;
+      color: #666;
+      margin-bottom: 0.75rem;
+    }
+    .news-list {
+      list-style: disc;
+      padding-left: 1.5rem;
+    }
+    .news-list li {
+      margin-bottom: 0.5rem;
+    }
+    .news-list a {
+      text-decoration: none;
+      color: #0066cc;
+      transition: color 0.2s ease;
+    }
+    .news-list a:hover {
+      color: #004999;
+    }
+  </style>
+</head>
+<body>
+  <h1>📊 Daily Sentiment Dashboard</h1>
+
+  <div class="section">
+    <h2>🥇 Top Positive Assets</h2>
+    <div class="card-container" id="positive-cards"></div>
+  </div>
+
+  <div class="section">
+    <h2>🥶 Most Negative Assets</h2>
+    <div class="card-container" id="negative-cards"></div>
+  </div>
+
+  <script>
+    const data = {
+      topPositive: [
+        {
+          ticker: "AAPL",
+          name: "Apple Inc.",
+          score: 0.91,
+          news: [
+            {
+              title: "Apple shares surge after new product launch",
+              url: "https://example.com/apple1"
+            },
+            {
+              title: "Analysts praise Apple’s strong earnings",
+              url: "https://example.com/apple2"
+            }
+          ]
+        },
+        {
+          ticker: "TSLA",
+          name: "Tesla Inc.",
+          score: 0.88,
+          news: [
+            {
+              title: "Tesla exceeds delivery expectations",
+              url: "https://example.com/tsla1"
+            }
+          ]
+        },
+        {
+          ticker: "BTC-USD",
+          name: "Bitcoin USD",
+          score: 0.85,
+          news: [
+            {
+              title: "Bitcoin rebounds after market dip",
+              url: "https://example.com/btc1"
+            }
+          ]
+        }
+      ],
+      topNegative: [
+        {
+          ticker: "GOOG",
+          name: "Alphabet Inc.",
+          score: -0.85,
+          news: [
+            {
+              title: "Google faces antitrust lawsuit",
+              url: "https://example.com/goog1"
+            }
+          ]
+        },
+        {
+          ticker: "MSFT",
+          name: "Microsoft Corp.",
+          score: -0.78,
+          news: [
+            {
+              title: "Microsoft stock dips after earnings miss",
+              url: "https://example.com/msft1"
+            }
+          ]
+        },
+        {
+          ticker: "BIL",
+          name: "1-3 Month T-Bill ETF",
+          score: -0.65,
+          news: [
+            {
+              title: "Investors flee from short-term bonds",
+              url: "https://example.com/bil1"
+            }
+          ]
+        }
+      ]
+    };
+
+    function renderCards(dataArray, containerId) {
+      const container = document.getElementById(containerId);
+      dataArray.forEach(asset => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <h2>${asset.ticker} - ${asset.name}</h2>
+          <div class="score">Sentiment Score: ${asset.score.toFixed(2)}</div>
+          <ul class="news-list">
+            ${asset.news.map(n => `<li><a href="${n.url}" target="_blank">${n.title}</a></li>`).join("")}
+          </ul>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    renderCards(data.topPositive, "positive-cards");
+    renderCards(data.topNegative, "negative-cards");
+  </script>
+</body>
+</html>

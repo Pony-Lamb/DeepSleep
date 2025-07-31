@@ -108,19 +108,20 @@ async function showStockDetail(symbol) {
     today_low = parseFloat(current_details.data.low_prices[length_price-1]);
     // today_open = parseFloat(current_details.data.close_prices[length_price-2]);
 
-    document.getElementById('detail-stock-logo').src = stock.logo;
-    document.getElementById('detail-stock-logo').alt = stock.name + ' logo';
-    document.getElementById('detail-page-title').textContent = stock.name;
-    document.getElementById('detail-stock-name').textContent = stock.name;
-    document.getElementById('detail-stock-symbol').textContent = stock.symbol;
-    document.getElementById('detail-stock-price').textContent = today_close.toFixed(2);
-    const changeDiv = document.getElementById('detail-stock-change');
+    // document.getElementById('detail-stock-logo').src = stock.logo;
+    // document.getElementById('detail-stock-logo').alt = stock.name + ' logo';
+    // document.getElementById('detail-page-title').textContent = stock.name;
+    // document.getElementById('detail-stock-name').textContent = stock.name;
+    // document.getElementById('detail-stock-symbol').textContent = stock.symbol;
+    // document.getElementById('detail-stock-price').textContent = today_close.toFixed(2);
+    // const changeDiv = document.getElementById('detail-stock-change');
+
     var change_num = today_close - today_open;
     var change_rate = change_num / today_open * 100;
     console.log("change_num: ", change_num);
     
     // Update the stock_price_bigcard element
-    document.getElementById('stock_price_bigcard').textContent = today_close.toFixed(2);
+    // document.getElementById('stock_price_bigcard').textContent = today_close.toFixed(2);
 
     // Update the change indicator next to stock_price_bigcard
     const changeElement = document.getElementById('change_rate_bigcard');
@@ -154,16 +155,16 @@ async function showStockDetail(symbol) {
     }
 
 
-    if (change_rate < 0) {
-      changeDiv.innerHTML = `<iconify-icon icon="mdi:trending-down" class="text-green-500 mr-1"></iconify-icon>
-        <span class="text-green-600 font-bold">${change_rate.toFixed(2)}%</span>`;
-        // document.getElementById('change_rate_bigcard').innerHTML = `<i class="fa fa-caret-up mr-1"></i>${change_num.toFixed(2)} (${change_rate.toFixed(2)}%)`
-    } else {
-      changeDiv.innerHTML = `<iconify-icon icon="mdi:trending-up" class="text-red-500 mr-1"></iconify-icon>
-        <span class="text-red-600 font-bold">+${change_rate.toFixed(2)}%</span>`;
-        // document.getElementById('change_rate_bigcard').innerHTML = `<i class="fa fa-caret-up mr-1"></i>${change_num.toFixed(2)} (+${change_rate.toFixed(2)}%)`
+    // if (change_rate < 0) {
+    //   changeDiv.innerHTML = `<iconify-icon icon="mdi:trending-down" class="text-green-500 mr-1"></iconify-icon>
+    //     <span class="text-green-600 font-bold">${change_rate.toFixed(2)}%</span>`;
+    //     // document.getElementById('change_rate_bigcard').innerHTML = `<i class="fa fa-caret-up mr-1"></i>${change_num.toFixed(2)} (${change_rate.toFixed(2)}%)`
+    // } else {
+    //   changeDiv.innerHTML = `<iconify-icon icon="mdi:trending-up" class="text-red-500 mr-1"></iconify-icon>
+    //     <span class="text-red-600 font-bold">+${change_rate.toFixed(2)}%</span>`;
+    //     // document.getElementById('change_rate_bigcard').innerHTML = `<i class="fa fa-caret-up mr-1"></i>${change_num.toFixed(2)} (+${change_rate.toFixed(2)}%)`
 
-    }
+    // }
     
     // Update the stock detail cards with actual values
     const openCardValue = document.querySelector('.stock-detail-card:nth-child(1) .text-lg');
@@ -177,15 +178,6 @@ async function showStockDetail(symbol) {
     highCardValue.textContent = today_high.toFixed(2);
     lowCardValue.textContent = today_low.toFixed(2);
     
-    // Update styles based on comparison with previous close
-    // Open price
-    if (today_open > today_open) {
-      openCardValue.className = 'text-lg font-semibold mt-1 text-rise';
-    } else if (today_open < today_open) {
-      openCardValue.className = 'text-lg font-semibold mt-1 text-fall';
-    } else {
-      openCardValue.className = 'text-lg font-semibold mt-1';
-    }
     
     // Close price (current price)
     if (today_close > today_open) {
@@ -196,23 +188,7 @@ async function showStockDetail(symbol) {
       closeCardValue.className = 'text-lg font-semibold mt-1';
     }
     
-    // High price
-    if (today_high > today_open) {
-      highCardValue.className = 'text-lg font-semibold mt-1 text-rise';
-    } else if (today_high < today_open) {
-      highCardValue.className = 'text-lg font-semibold mt-1 text-fall';
-    } else {
-      highCardValue.className = 'text-lg font-semibold mt-1';
-    }
-    
-    // Low price
-    if (today_low > today_open) {
-      lowCardValue.className = 'text-lg font-semibold mt-1 text-rise';
-    } else if (today_low < today_open) {
-      lowCardValue.className = 'text-lg font-semibold mt-1 text-fall';
-    } else {
-      lowCardValue.className = 'text-lg font-semibold mt-1';
-    }
+
   }
   setTimeout(() => {
     if (!myChart) {

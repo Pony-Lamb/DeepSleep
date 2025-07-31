@@ -20,41 +20,6 @@ const stockDetailData = [
   { name: "Netflix Inc.", symbol: "NFLX", price: 483.32, change: 4.63, logo: "https://modao.cc/ai/uploads/ai_pics/6/66428/aigp_1753747623.jpeg", desc: "Netflix, Inc. provides entertainment services. It offers TV series, documentaries, feature films, and mobile games." }
 ];
 
-// View switching function
-// function switchPanel(panelId) {
-//   console.log('Switching to panel:', panelId);
-
-//   // 切换这四个面板
-//   ['homePanel', 'tradingPanel', 'portfolioPanel', 'stockDetailPanel', 'transactionPanel'].forEach(id => {
-//     const el = document.getElementById(id);
-//     if (el) {
-//       el.style.display = 'none';
-//       el.classList.add('hidden');
-//       console.log('Hidden panel:', id);
-//     }
-//   });
-
-//   const showEl = document.getElementById(panelId);
-//   if (showEl) {
-//     showEl.style.display = 'block';
-//     showEl.classList.remove('hidden');
-//     console.log('Showed panel:', panelId);
-//   } else {
-//     console.error('Panel not found:', panelId);
-//   }
-
-//   // 切换左侧导航高亮
-//   const navBtns = document.querySelectorAll('.glass-nav nav button');
-//   navBtns.forEach((btn, idx) => {
-//     btn.classList.remove('bg-blue-100', 'text-blue-800', 'font-medium');
-//     btn.classList.add('text-gray-700');
-//     // Home和Stock Trading都指向tradingPanel
-//     if ((panelId === 'tradingPanel' && idx <= 1) || (panelId === 'portfolioPanel' && idx === 2)) {
-//       btn.classList.add('bg-blue-100', 'text-blue-800', 'font-medium');
-//       btn.classList.remove('text-gray-700');
-//     }
-//   });
-// }
 
 // View switching function
 function switchPanel(panelId) {
@@ -337,8 +302,12 @@ document.addEventListener('click', function (e) {
 // Period buttons interaction - 这个功能已经在appInit中处理了
 
 
-window.appInit = function () {
+
+window.appInit = async function () {
   console.log('Starting app initialization...');
+  sentimentData = await fetchSentimentData();
+  renderSentimentCards(sentimentData.topPositive, 'sentiment-positive-cards');
+  renderSentimentCards(sentimentData.topNegative, 'sentiment-negative-cards');
 
   // 绑定 portfolio 按钮事件
   const portfolioBtns = document.querySelectorAll('.portfolio-btn');

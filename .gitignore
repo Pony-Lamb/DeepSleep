@@ -4,3 +4,8 @@ data_collection/
 
 backend/
 yuki-fake-server.py
+
+average_sentiment_by_ticker_date.json
+news_all.json
+news_results.json
+yahoo_news_last100days.json

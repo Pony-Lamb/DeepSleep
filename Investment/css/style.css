@@ -16,6 +16,77 @@ body {
   overflow: hidden;
 }
 
+
+
+#sentiment-section{
+  margin-top: 5rem;
+}
+
+  #sentiment-section .sentiment-columns {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  #sentiment-section .sentiment-column {
+    flex: 1 1 400px;
+    max-width: 480px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  }
+  #sentiment-section .sentiment-column h3 {
+    text-align: center;
+    color: #444;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+  }
+  #sentiment-section .sentiment-card-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: center;
+  }
+  #sentiment-section .sentiment-card {
+    background-color: #fefefe;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  #sentiment-section .sentiment-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+  #sentiment-section .sentiment-card h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.15rem;
+    color: #222;
+  }
+  #sentiment-section .sentiment-score {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0.75rem;
+  }
+  #sentiment-section .sentiment-news-list {
+    list-style: disc inside;
+    padding-left: 1rem;
+    margin: 0;
+  }
+  #sentiment-section .sentiment-news-list li {
+    margin-bottom: 0.5rem;
+  }
+  #sentiment-section .sentiment-news-list a {
+    color: #0066cc;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  #sentiment-section .sentiment-news-list a:hover {
+    color: #004999;
+    text-decoration: underline;
+  }
+
 .glass-nav {
   background: rgba(248, 250, 252, 0.8);
   backdrop-filter: blur(10px);
