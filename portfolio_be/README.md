@@ -676,11 +676,12 @@ POST /api/v1/asset/sell/{asset_id}/{user_id}
 
 **🧾Request Parameters**
 
-| Parameter | Type   | Mandatory | Example      | Description                       |
-|-----------|--------|-----------|--------------|-----------------------------------|
-| asset_id  | string | Yes       | XOM          | Which assets you want to sell?    |
-| num       | int    | Yes       | 10           | How many assets you want to sell? |
-| date      | str    | Yes       | '2023-05-01' | Today's date.                     |
+| Parameter      | Type   | Mandatory | Example      | Description                       |
+|----------------|--------|-----------|--------------|-----------------------------------|
+| asset_id       | string | Yes       | XOM          | Which assets you want to sell?    |
+| num            | int    | Yes       | 10           | How many assets you want to sell? |
+| date           | str    | Yes       | '2023-05-01' | Today's date.                     |
+| portfolio_name | str    | Yes       | '长期持有'       | Portfolio name.                   |
 
 **✅ Successful Response**
 
