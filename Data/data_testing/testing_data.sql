@@ -1,3 +1,4 @@
+#这个是用来测利润数据是否准确，可查到今日市值和昨日市值
 SELECT A.user_name,
 	         B.portfolio_name,
              A.data_date AS today,
@@ -21,3 +22,15 @@ ON A.user_name = B.user_name
 WHERE A.portfolio_name = B.portfolio_name
 AND A.data_date = '2023-05-05'
 GROUP BY user_name, portfolio_name
+
+#这个用来测饼状图数据是否准确，这里可看到各类资产每日市值
+SELECT user_name,
+	   portfolio_name,
+	   category,
+	   data_date,
+       SUM(asset_value) AS market_value
+FROM full_asset_value
+#WHERE data_date = ?
+#AND user_name = ?
+#AND portfolio_name = ?
+GROUP BY user_name, portfolio_name, category, data_date;
