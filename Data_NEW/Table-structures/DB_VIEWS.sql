@@ -41,7 +41,7 @@ SELECT DISTINCT A.user_id,
 FROM user_info A, portfolio B
 WHERE A.user_id = B.user_id;
 
-#视图-昨日市值
+#视图-昨日市值（收益）
 CREATE VIEW yesterday_asset_value AS
 SELECT B.user_id,
 	   B.user_name,
@@ -59,8 +59,8 @@ LEFT JOIN assets C
 ON A.asset_id = C.asset_id
 WHERE A.portfolio_date = C.data_date;
 
-#视图-今日市值
-CREATE VIEW full_asset_value AS
+#视图-今日市值（收益）
+CREATE VIEW today_asset_value AS
 SELECT B.user_id,
 	   B.user_name,
 	   A.portfolio_name,
@@ -77,3 +77,19 @@ LEFT JOIN assets C
 ON A.asset_id = C.asset_id
 WHERE A.portfolio_date = date_add(C.data_date, INTERVAL - 1 day);
 
+#视图-全类资产价值表
+CREATE VIEW full_asset_value AS
+SELECT B.user_id,
+	   B.user_name,
+	   A.portfolio_name,
+	   C.asset_id,
+	   C.asset_name,
+       C.open_price,
+       C.category,
+       C.data_date,	   
+	   (C.open_price * A.quantity) AS asset_value
+FROM portfolio A
+LEFT JOIN user_info B
+ON A.user_id = B.user_id
+LEFT JOIN assets C
+ON A.asset_id = C.asset_id;
