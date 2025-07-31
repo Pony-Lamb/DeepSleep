@@ -6,7 +6,7 @@ FROM (SELECT A.user_name,
 	         B.portfolio_name,
              SUM(asset_value) AS today_value,
 	         yesterday_value
-      FROM full_asset_value A
+      FROM today_asset_value A
      #WHERE data_date = ?
      #AND user_name = ?
      #AND portfolio_name = ?
