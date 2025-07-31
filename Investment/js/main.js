@@ -415,7 +415,7 @@ setTimeout(async () => {
     window.addEventListener('resize', () => donut.resize());
   }
 
-  const date = "2025-07-29";
+  const date = "2025-08-01";
 
      // 获取总资产并更新到页面
 
@@ -460,7 +460,7 @@ setTimeout(async () => {
       console.log("yesterday: ", yesterday);
       console.log("today: ", date);
       console.log("userId: ", userId);
-      const assetRes = await fetch(`http://127.0.0.1:5000/api/v1/asset/total/${userId}?date=2025-07-28`);
+      const assetRes = await fetch(`http://127.0.0.1:5000/api/v1/asset/total/${userId}?date=2025-07-31`);
       const assetData = await assetRes.json();
 
       console.log("profitData: ", profitData);
