@@ -35,7 +35,6 @@ ON A.asset_id = C.asset_id
 GROUP BY B.user_id, B.user_name, A.portfolio_name, data_date;
 
 
-
 #视图-用户投资组合表，返回各用户持有的投资组合
 CREATE VIEW user_portfolios AS
 SELECT DISTINCT A.user_id,
