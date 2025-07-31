@@ -184,6 +184,10 @@ body {
   color: #EF4444;
 }
 
+.text-down {
+  color: #10B981;;
+}
+
 .bg-rise\/10 {
   background-color: rgba(16, 185, 129, 0.1);
 }

@@ -20,6 +20,75 @@ async function getRealStockData(symbol) {
 }
 
 // 展示股票详情
+// async function showStockDetail(symbol) {
+//   // 统一用switchPanel切换面板
+//   switchPanel('stockDetailPanel');
+
+//   current_details = await getRealStockData(symbol);
+//   console.log("Successfully fetched stock data.");
+//   console.log("current_details: ", current_details);
+
+//   // 查找数据
+//   const stock = stockDetailData.find(s => s.symbol === symbol);
+//   if (stock) {
+//     length_price = current_details.data.close_prices.length;
+//     today_close = parseFloat(current_details.data.close_prices[length_price-1]);
+//     today_open = parseFloat(current_details.data.open_prices[length_price-1]);
+//     today_high = parseFloat(current_details.data.high_prices[length_price-1]);
+//     today_low = parseFloat(current_details.data.low_prices[length_price-1]);
+//     today_open = parseFloat(current_details.data.close_prices[length_price-2]);
+
+//     document.getElementById('detail-stock-logo').src = stock.logo;
+//     document.getElementById('detail-stock-logo').alt = stock.name + ' logo';
+//     document.getElementById('detail-page-title').textContent = stock.name;
+//     document.getElementById('detail-stock-name').textContent = stock.name;
+//     document.getElementById('detail-stock-symbol').textContent = stock.symbol;
+//     document.getElementById('detail-stock-price').textContent = today_close;
+//     const changeDiv = document.getElementById('detail-stock-change');
+//     var change_num = today_close - today_open;
+//     var change_rate = change_num / today_open * 100;
+//     console.log("change_num: ", change_num);
+
+//     document.getElementById('stock_price_bigcard').textContent = today_close.toFixed(2);    
+//     // a = `${change_num.toFixed(2)} (${change_rate.toFixed(2)})`;
+
+//     if (change_rate < 0) {
+//         changeDiv.innerHTML = `<iconify-icon icon="mdi:trending-down" class="text-green-500 mr-1"></iconify-icon>
+//         <span class="text-green-600 font-bold">${change_rate.toFixed(2)}%</span>`;
+//         document.getElementById('change_rate_bigcard').innerHTML = `<i class="fa fa-caret-up mr-1"></i>${change_num.toFixed(2)} (${change_rate.toFixed(2)}%)`
+
+//     } else {
+//         changeDiv.innerHTML = `<iconify-icon icon="mdi:trending-up" class="text-red-500 mr-1"></iconify-icon>
+//         <span class="text-red-600 font-bold">${change_rate.toFixed(2)}%</span>`;
+//         document.getElementById('change_rate_bigcard').innerHTML = `<i class="fa fa-caret-up mr-1"></i>${change_num.toFixed(2)} (+${change_rate.toFixed(2)}%)`
+
+//     }
+//   }
+//   setTimeout(() => {
+//     if (!myChart) {
+//       initStockChart();
+//     }
+//     if (myChart) {
+//       myChart.resize();
+//       updateChart(30);
+//       const periodButtons = document.querySelectorAll('[data-days]');
+//         periodButtons.forEach(button => {
+//           const days = parseInt(button.getAttribute('data-days'));
+//           if (days === 30) {
+//             // Highlight the 30-day button
+//             button.classList.remove('inactive-period');
+//             button.classList.add('active-period');
+//           } else {
+//             // Make other buttons inactive
+//             button.classList.remove('active-period');
+//             button.classList.add('inactive-period');
+//           }
+//         });
+//     }
+//   }, 100);
+// }
+
+// 展示股票详情
 async function showStockDetail(symbol) {
   // 统一用switchPanel切换面板
   switchPanel('stockDetailPanel');
@@ -31,19 +100,118 @@ async function showStockDetail(symbol) {
   // 查找数据
   const stock = stockDetailData.find(s => s.symbol === symbol);
   if (stock) {
+    length_price = current_details.data.close_prices.length;
+    // Convert to numbers using parseFloat
+    today_close = parseFloat(current_details.data.close_prices[length_price-1]);
+    today_open = parseFloat(current_details.data.open_prices[length_price-1]);
+    today_high = parseFloat(current_details.data.high_prices[length_price-1]);
+    today_low = parseFloat(current_details.data.low_prices[length_price-1]);
+    // today_open = parseFloat(current_details.data.close_prices[length_price-2]);
+
     document.getElementById('detail-stock-logo').src = stock.logo;
     document.getElementById('detail-stock-logo').alt = stock.name + ' logo';
     document.getElementById('detail-page-title').textContent = stock.name;
     document.getElementById('detail-stock-name').textContent = stock.name;
     document.getElementById('detail-stock-symbol').textContent = stock.symbol;
-    document.getElementById('detail-stock-price').textContent = stock.price.toFixed(2);
+    document.getElementById('detail-stock-price').textContent = today_close.toFixed(2);
     const changeDiv = document.getElementById('detail-stock-change');
-    if (stock.change < 0) {
+    var change_num = today_close - today_open;
+    var change_rate = change_num / today_open * 100;
+    console.log("change_num: ", change_num);
+    
+    // Update the stock_price_bigcard element
+    document.getElementById('stock_price_bigcard').textContent = today_close.toFixed(2);
+
+    // Update the change indicator next to stock_price_bigcard
+    const changeElement = document.getElementById('change_rate_bigcard');
+    const changeFormatted = Math.abs(change_num).toFixed(2);
+    const percentFormatted = Math.abs(change_rate).toFixed(2);
+    
+    // Update the text content and icon
+    const caretDirection = change_num >= 0 ? 'up' : 'down';
+    const isPositive = change_num >= 0;
+    
+    changeElement.innerHTML = `
+      <i class="fa fa-caret-${caretDirection} mr-1"></i>
+      ${changeFormatted} (${percentFormatted}%)`;
+
+    // Update the stock_price_bigcard element with color coding
+    const priceElement = document.getElementById('stock_price_bigcard');
+
+    // Apply color based on price movement (positive = rise, negative = fall)
+    if (change_num >= 0) {
+        priceElement.className = 'text-2xl font-bold mr-3 text-rise';
+    } else {
+        priceElement.className = 'text-2xl font-bold mr-3 text-down';
+    }
+    
+    
+    // Update colors based on change direction
+    if (isPositive) {
+      changeElement.className = 'bg-rise/10 text-rise px-2 py-1 rounded text-sm flex items-center';
+    } else {
+      changeElement.className = 'bg-fall/10 text-fall px-2 py-1 rounded text-sm flex items-center';
+    }
+
+
+    if (change_rate < 0) {
       changeDiv.innerHTML = `<iconify-icon icon="mdi:trending-down" class="text-green-500 mr-1"></iconify-icon>
-        <span class="text-green-600 font-bold">+${stock.change}%</span>`;
+        <span class="text-green-600 font-bold">${change_rate.toFixed(2)}%</span>`;
+        // document.getElementById('change_rate_bigcard').innerHTML = `<i class="fa fa-caret-up mr-1"></i>${change_num.toFixed(2)} (${change_rate.toFixed(2)}%)`
     } else {
       changeDiv.innerHTML = `<iconify-icon icon="mdi:trending-up" class="text-red-500 mr-1"></iconify-icon>
-        <span class="text-red-600 font-bold">${stock.change}%</span>`;
+        <span class="text-red-600 font-bold">+${change_rate.toFixed(2)}%</span>`;
+        // document.getElementById('change_rate_bigcard').innerHTML = `<i class="fa fa-caret-up mr-1"></i>${change_num.toFixed(2)} (+${change_rate.toFixed(2)}%)`
+
+    }
+    
+    // Update the stock detail cards with actual values
+    const openCardValue = document.querySelector('.stock-detail-card:nth-child(1) .text-lg');
+    const closeCardValue = document.querySelector('.stock-detail-card:nth-child(2) .text-lg');
+    const highCardValue = document.querySelector('.stock-detail-card:nth-child(3) .text-lg');
+    const lowCardValue = document.querySelector('.stock-detail-card:nth-child(4) .text-lg');
+    
+    // Set the values
+    openCardValue.textContent = today_open.toFixed(2);
+    closeCardValue.textContent = today_close.toFixed(2);
+    highCardValue.textContent = today_high.toFixed(2);
+    lowCardValue.textContent = today_low.toFixed(2);
+    
+    // Update styles based on comparison with previous close
+    // Open price
+    if (today_open > today_open) {
+      openCardValue.className = 'text-lg font-semibold mt-1 text-rise';
+    } else if (today_open < today_open) {
+      openCardValue.className = 'text-lg font-semibold mt-1 text-fall';
+    } else {
+      openCardValue.className = 'text-lg font-semibold mt-1';
+    }
+    
+    // Close price (current price)
+    if (today_close > today_open) {
+      closeCardValue.className = 'text-lg font-semibold mt-1 text-rise';
+    } else if (today_close < today_open) {
+      closeCardValue.className = 'text-lg font-semibold mt-1 text-fall';
+    } else {
+      closeCardValue.className = 'text-lg font-semibold mt-1';
+    }
+    
+    // High price
+    if (today_high > today_open) {
+      highCardValue.className = 'text-lg font-semibold mt-1 text-rise';
+    } else if (today_high < today_open) {
+      highCardValue.className = 'text-lg font-semibold mt-1 text-fall';
+    } else {
+      highCardValue.className = 'text-lg font-semibold mt-1';
+    }
+    
+    // Low price
+    if (today_low > today_open) {
+      lowCardValue.className = 'text-lg font-semibold mt-1 text-rise';
+    } else if (today_low < today_open) {
+      lowCardValue.className = 'text-lg font-semibold mt-1 text-fall';
+    } else {
+      lowCardValue.className = 'text-lg font-semibold mt-1';
     }
   }
   setTimeout(() => {
@@ -143,7 +311,7 @@ function generateStockData(days = 30) {
 }
 
 // Calculate Bollinger Bands
-function calculateBollingerBands(data, period = 20, stdDev = 2) {
+function calculateBollingerBands(data, period = 14, stdDev = 2) {
   const closePrices = data.map(item => item[2]);
   const bollingerData = [];
 
