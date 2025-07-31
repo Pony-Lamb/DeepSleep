@@ -1,4 +1,4 @@
-// Stock data for search suggestions
+/ Stock data for search suggestions
 const stockData = [
   { name: "Apple Inc.", symbol: "AAPL", price: 175.42, change: 2.35 },
   { name: "Microsoft Corp.", symbol: "MSFT", price: 336.21, change: 1.64 },
@@ -730,9 +730,21 @@ switchPanel('homePanel');
 // 初始化首页图表
 setTimeout(async () => {
   const userId = 1; // 可替换为动态 ID
+  
 
   // ✅ 获取资产分布（饼图）数据
-  const allocationRes = await fetch(`http://127.0.0.1:5000/api/v1/asset/total/allocation/${userId}?date=2025-07-29`);
+  function getTodayDateStr() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+  const todayStr = getTodayDateStr();
+
+  // 构造动态请求
+  const allocationRes = await fetch(`http://127.0.0.1:5000/api/v1/asset/total/allocation/${userId}?date=${todayStr}`);
 
 
   const allocationData = await allocationRes.json();
@@ -763,7 +775,14 @@ setTimeout(async () => {
     window.addEventListener('resize', () => donut.resize());
   }
 
-  const date = "2025-08-01";
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0'); // 月份从0开始，所以要+1
+  const day = String(today.getDate()).padStart(2, '0');
+  const date = `${year}-${month}-${day}`;
+
+  console.log(date); // 输出形如 "2025-08-01"
+
 
      // 获取总资产并更新到页面
 
@@ -886,13 +905,30 @@ setTimeout(async () => {
 }
 fetchProfitInfo(userId, date);
 
+function formatDate(dateObj) {
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
+  // 当前日期作为 fromDate
+  // const today = new Date();
+  const fromDate = formatDate(today);
+
+  // 前 7 天作为 toDate
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(today.getDate() - 7);
+  const toDate = formatDate(sevenDaysAgo);
+
+  // 发起请求
+  const profitRes = await fetch(`http://127.0.0.1:5000/api/v1/profit/prev/${userId}?fromDate=${fromDate}&toDate=${toDate}`);
 
   // 页面加载后执行
   // window.addEventListener("DOMContentLoaded", fetchTotalAsset);
   
   // ✅ 获取收益时间序列数据
-  const profitRes = await fetch(`http://127.0.0.1:5000/api/v1/profit/prev/${userId}?fromDate=2025-07-31&toDate=2025-07-24`);
+  // const profitRes = await fetch(`http://127.0.0.1:5000/api/v1/profit/prev/${userId}?fromDate=2025-07-31&toDate=2025-07-24`);
   // const profitData = await profitRes.json(); // 应该返回 { today: [...], week: [...], ... }
   // console.log("response status:", profitRes.status); // 打印 HTTP 状态码
   // console.log("response ok:", profitRes.ok);         // 是否是 200-299 范围的状态码
@@ -984,6 +1020,7 @@ if (lineDom) {
   console.log('App initialized successfully');
 };
 
+
 // 交易弹窗相关逻辑
 let currentTradeSymbol = '';
 let currentTradePrice = 0;
@@ -1069,6 +1106,8 @@ function syncPortfolioPanelButtons() {
     btnsDiv.appendChild(btn);
   });
 }
+
+
 
 
 
