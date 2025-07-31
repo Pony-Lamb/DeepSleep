@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeepSleep - Investment Management</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+</head>
+
+<body class="flex">
+  <div id="nav"></div>
+  <div class="w-80-percent h-screen overflow-auto">
+    <div id="homePanel"></div>
+    <div id="tradingPanel"></div>
+    <div id="portfolioPanel"></div>
+    <div id="stockDetailPanel"></div>
+    <!-- <div id="transactionPanel"></div> -->
+  </div>
+  <div id="modals"></div>
+  <script src="js/main.js"></script>
+  <script src="js/details.js"></script>
+  <!-- <script src="js/transaction.js"></script> -->
+  <script>
+    // 动态加载组件，并在全部加载后初始化
+    const components = [
+      ['nav', 'components/nav.html'],
+      ['homePanel', 'components/home-panel.html'],
+      ['tradingPanel', 'components/trading-panel.html'],
+      ['portfolioPanel', 'components/portfolio-panel.html'],
+      ['stockDetailPanel', 'components/stockDetail-panel.html'],
+      // ['transactionPanel', 'components/transaction-panel.html'],
+      ['modals', 'components/modals.html']
+    ];
+    let loaded = 0;
+    function loadComponent(id, url) {
+      fetch(url)
+        .then(r => r.text())
+        .then(html => {
+          document.getElementById(id).innerHTML = html;
+          loaded++;
+          if (loaded === components.length && window.appInit) {
+            setTimeout(() => {
+              window.appInit();
+            }, 100);
+          }
+        });
+    }
+    components.forEach(([id, url]) => loadComponent(id, url));
+  </script>
+</body>
+
+</html>
