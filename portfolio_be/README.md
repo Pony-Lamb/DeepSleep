@@ -62,11 +62,12 @@ GET /api/v1/users/{user_id}
 ```json
 {
   "code": 200,
-  "message": "Successfully retrieved user information!",
   "data": {
-    "user_id": 1,
-    "name": "user_1"
-  }
+    "available_funds": 50000.0,
+    "name": "张三",
+    "user_id": 1
+  },
+  "message": "Successfully retrieved user information!"
 }
 ```
 
@@ -174,9 +175,9 @@ GET /api/v1/asset/total/allocation/{user_id}
 
 **🧾Request Parameters**
 
-| Parameter | Type | Mandatory | Example      | Description                               |
-|-----------|------|-----------|--------------|-------------------------------------------|
-| date      | str  | Yes       | '2025-07-29' | User total asset allocation of which date |
+| Parameter | Type | Mandatory | Example      | Description                                |
+|-----------|------|-----------|--------------|--------------------------------------------|
+| date      | str  | Yes       | '2023-05-01' | User total asset allocation of which date. |
 
 **✅ Successful Response**
 
@@ -192,10 +193,9 @@ GET /api/v1/asset/total/allocation/{user_id}
       "others"
     ],
     "asset_total_price": [
-      "41.39",
-      "12.00",
-      "0.00",
-      "6.30"
+      "18049.00",
+      "13520.00",
+      "12448.00"
     ]
   }
 }
@@ -205,7 +205,7 @@ GET /api/v1/asset/total/allocation/{user_id}
 
 ```json
 {
-  "code": 404,
+  "code": 400,
   "message": "Invalid user or date."
 }
 ```
@@ -220,10 +220,10 @@ GET /api/v1/profit/prev/{user_id}
 
 **🧾Request Parameters**
 
-| Parameter | Type | Mandatory | Example      | Description                       |
-|-----------|------|-----------|--------------|-----------------------------------|
-| fromDate  | str  | Yes       | '2023-05-04' | User total profit from which date |
-| toDate    | str  | Yes       | '2023-05-05' | User total profit to which date   |
+| Parameter | Type | Mandatory | Example      | Description                        |
+|-----------|------|-----------|--------------|------------------------------------|
+| fromDate  | str  | Yes       | '2023-05-04' | User total profit from which date. |
+| toDate    | str  | Yes       | '2023-05-05' | User total profit to which date.   |
 
 **✅ Successful Response**
 
