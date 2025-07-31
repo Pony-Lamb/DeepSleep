@@ -922,7 +922,7 @@ function formatDate(dateObj) {
   const toDate = formatDate(sevenDaysAgo);
 
   // 发起请求
-  const profitRes = await fetch(`http://127.0.0.1:5000/api/v1/profit/prev/${userId}?fromDate=${fromDate}&toDate=${toDate}`);
+  const profitRes = await fetch(`http://127.0.0.1:5000/api/v1/profit/prev/${userId}?fromDate=${toDate}&toDate=${fromDate}`);
 
   // 页面加载后执行
   // window.addEventListener("DOMContentLoaded", fetchTotalAsset);
