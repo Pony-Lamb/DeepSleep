@@ -17,8 +17,7 @@ WHERE data_date = (SELECT MAX(data_date)
 				   FROM assets C
                    WHERE C.asset_id = b.asset_id
                    GROUP BY C.asset_id);
-                   
-				   
+                   				   
 #视图-投资组合资产市值表，展示用户各投资组合的市值
 CREATE VIEW portfolio_daily_value AS
 SELECT ROW_NUMBER() OVER (ORDER BY B.user_id, A.portfolio_name, data_date) AS id,
@@ -34,7 +33,6 @@ LEFT JOIN assets C
 ON A.asset_id = C.asset_id
 GROUP BY B.user_id, B.user_name, A.portfolio_name, data_date;
 
-
 #视图-用户投资组合表，返回各用户持有的投资组合
 CREATE VIEW user_portfolios AS
 SELECT DISTINCT A.user_id,
@@ -43,7 +41,25 @@ SELECT DISTINCT A.user_id,
 FROM user_info A, portfolio B
 WHERE A.user_id = B.user_id;
 
-#视图-全类资产价值表
+#视图-昨日市值
+CREATE VIEW yesterday_asset_value AS
+SELECT B.user_id,
+	   B.user_name,
+	   A.portfolio_name,
+	   C.asset_id,
+	   C.asset_name,
+       C.open_price,
+       C.category,
+       C.data_date,	   
+	   (C.open_price * A.quantity) AS asset_value
+FROM portfolio A
+LEFT JOIN user_info B
+ON A.user_id = B.user_id
+LEFT JOIN assets C
+ON A.asset_id = C.asset_id
+WHERE A.portfolio_date = C.data_date;
+
+#视图-今日市值
 CREATE VIEW full_asset_value AS
 SELECT B.user_id,
 	   B.user_name,
@@ -58,5 +74,6 @@ FROM portfolio A
 LEFT JOIN user_info B
 ON A.user_id = B.user_id
 LEFT JOIN assets C
-ON A.asset_id = C.asset_id;
+ON A.asset_id = C.asset_id
+WHERE A.portfolio_date = date_add(C.data_date, INTERVAL - 1 day);
 
