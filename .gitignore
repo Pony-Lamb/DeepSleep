@@ -1,1 +1,6 @@
 Investment/components/transaction-panel.html
+
+data_collection/
+
+backend/
+yuki-fake-server.py
