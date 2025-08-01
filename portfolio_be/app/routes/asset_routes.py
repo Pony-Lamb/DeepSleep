@@ -8,6 +8,8 @@ from app.models.portfolio import Portfolio
 from app.models.user import User
 from app.utils.load_sql_file import load_sql
 
+import pandas as pd
+
 asset_bp = Blueprint('asset', __name__)
 
 
@@ -53,19 +55,18 @@ def get_total_asset_allocation(user_id):
             "user_id": user_id
         }
 
-        result = db.session.execute(sql_text, params).mappings().all()
-        category, asset = [], []
-        if result:
-            for r in result:
-                category.append(r.category)
-                asset.append(f"{r.market_value:.2f}")
+        data = db.session.execute(sql_text, params).mappings().all()
+
+        df = pd.DataFrame(data)
+        result = df.groupby('category')['market_value'].sum().reset_index()
+        result['market_value'] = result['market_value'].round(2)
 
         return jsonify({
             "code": 200,
             "message": "Successfully retrieved total asset allocation!",
             "data": {
-                "asset_type": category,
-                "asset_total_price": asset
+                "asset_type": result['category'].tolist(),
+                "asset_total_price": result['market_value'].tolist()
             }
         })
     except Exception as e:
