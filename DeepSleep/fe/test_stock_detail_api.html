@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock Detail API Test</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <div class="p-8">
+    <h1 class="text-2xl font-bold mb-4">Stock Detail API Test</h1>
+
+    <!-- 测试按钮 -->
+    <div class="mb-6 space-x-4">
+      <button onclick="testGetAssetDetail()" class="bg-blue-500 text-white px-4 py-2 rounded">
+        Test Get Asset Detail
+      </button>
+
+      <button onclick="testGetAssetHistory()" class="bg-green-500 text-white px-4 py-2 rounded">
+        Test Get Asset History
+      </button>
+
+      <button onclick="testShowStockDetail()" class="bg-purple-500 text-white px-4 py-2 rounded">
+        Test Show Stock Detail
+      </button>
+    </div>
+
+    <!-- 测试结果 -->
+    <div class="bg-gray-100 p-4 rounded">
+      <h2 class="text-lg font-bold mb-2">API Test Results:</h2>
+      <pre id="testResults" class="text-sm bg-white p-2 rounded"></pre>
+    </div>
+
+    <!-- 模拟股票详情面板 -->
+    <div class="mt-8 bg-white rounded-2xl shadow-lg p-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+        <div>
+          <h1 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-gray-900" id="detail-page-title">AAPL Apple Inc.
+          </h1>
+          <p class="text-gray-400">NASDAQ · US Stock</p>
+        </div>
+        <div class="mt-4 md:mt-0 flex items-center">
+          <span class="text-2xl font-bold mr-3 text-rise" id="stock_price_bigcard">0.00</span>
+          <span class="bg-rise/10 text-rise px-2 py-1 rounded text-sm flex items-center" id="change_rate_bigcard">
+            <i class="fa fa-caret-up mr-1"></i>0.00 (0.00%)
+          </span>
+        </div>
+      </div>
+
+      <!-- Stock overview data -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="stock-detail-card">
+          <div class="text-gray-400 text-sm">Open</div>
+          <div class="text-lg font-semibold mt-1">0.00</div>
+        </div>
+        <div class="stock-detail-card">
+          <div class="text-gray-400 text-sm">Close</div>
+          <div class="text-lg font-semibold mt-1 text-rise">0.00</div>
+        </div>
+        <div class="stock-detail-card">
+          <div class="text-gray-400 text-sm">High</div>
+          <div class="text-lg font-semibold mt-1 text-rise">0.00</div>
+        </div>
+        <div class="stock-detail-card">
+          <div class="text-gray-400 text-sm">Low</div>
+          <div class="text-lg font-semibold mt-1">0.00</div>
+        </div>
+      </div>
+
+      <!-- K-line chart container -->
+      <div class="chart-container h-[500px] mb-6">
+        <div id="stockChart" class="w-full h-full"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api-service.js"></script>
+  <script src="js/stock-detail-panel.js"></script>
+  <script>
+    let apiService;
+    let stockDetailPanel;
+
+    function logResult(title, data) {
+      const resultsDiv = document.getElementById('testResults');
+      const timestamp = new Date().toLocaleTimeString();
+      resultsDiv.innerHTML += `\n[${timestamp}] ${title}:\n${JSON.stringify(data, null, 2)}\n`;
+      resultsDiv.scrollTop = resultsDiv.scrollHeight;
+    }
+
+    async function testGetAssetDetail() {
+      console.log('Testing getAssetDetail...');
+      if (!apiService) {
+        apiService = new ApiService();
+      }
+
+      try {
+        const result = await apiService.getAssetDetail('AAPL');
+        logResult('Get Asset Detail Result', result);
+      } catch (error) {
+        logResult('Get Asset Detail Error', { error: error.message });
+      }
+    }
+
+    async function testGetAssetHistory() {
+      console.log('Testing getAssetHistory...');
+      if (!apiService) {
+        apiService = new ApiService();
+      }
+
+      try {
+        const result = await apiService.getAssetHistory('AAPL', '2025-05-01', '2025-07-30');
+        logResult('Get Asset History Result', result);
+      } catch (error) {
+        logResult('Get Asset History Error', { error: error.message });
+      }
+    }
+
+    async function testShowStockDetail() {
+      console.log('Testing showStockDetail...');
+      if (!stockDetailPanel) {
+        stockDetailPanel = new StockDetailPanel();
+      }
+
+      try {
+        await stockDetailPanel.showStockDetail('AAPL');
+        logResult('Show Stock Detail Success', { message: 'Stock detail displayed successfully' });
+      } catch (error) {
+        logResult('Show Stock Detail Error', { error: error.message });
+      }
+    }
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('API test page loaded');
+      apiService = new ApiService();
+      stockDetailPanel = new StockDetailPanel();
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio测试</title>
+  <style>
+    .portfolio-btn {
+      padding: 8px 16px;
+      margin: 4px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .active {
+      background-color: #2563eb;
+      color: white;
+    }
+
+    .inactive {
+      background-color: #f3f4f6;
+      color: #374151;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Portfolio测试页面</h1>
+
+  <div id="portfolioPanel">
+    <div class="flex gap-4 mb-6 overflow-x-auto py-2">
+      <button class="portfolio-btn active" data-portfolio="US Stocks">US Stocks</button>
+      <button class="portfolio-btn inactive" data-portfolio="Tech Portfolio">Tech Portfolio</button>
+      <button class="portfolio-btn inactive" data-portfolio="New Portfolio">New Portfolio</button>
+    </div>
+  </div>
+
+  <div id="currentPortfolioName">US Stocks</div>
+
+  <script>
+        class Por      {
+            co                      this.selectedPort        ks';
+                this.setu      tto            }
+            
+             folioButtons() {
+                const portfolioButtons = document.que        portfolio-btn');
+                console.log(`setupPor到        ons.length} 个投资组合按钮`);
+                
+             ioButtons.forEach((btn, index) => {
+                    console.log(`绑定e          et.portfolio);
+                    
+               EventL                                    try {
+                      log('按钮点击事件触发:', e.target);
+                            const b              ortfolio-btn') || e.target;
+                            console.log(               button.dataset.portfolio);
+                                                       aset.portfolio) {
+                             og          ortf        
+                    this.handlePortfolioSelection(but                          } else {
+                        console.error('❌ 按钮数据无效:', button);
+                    }
+                        } catch (                          le.error('按钮点击处理出错:', error);
+                        }
+                              });
+            }
+            
+            han          n(button) {
+                console.log('=== 投资组合选择                    g('投资组合选择按钮被点击:', button.textContent);
+                consol        :', button.dataset);
+                
+                // 更              document.        ('.portfolio-btn').forEach(btn => {
+                    sList.remove('active');
+                        t.add('inactive');
+                });
+         utton.classList.add('active');
+              las    move('ina    
+                
+                // 获取选中的投资组合名称
+           onst portfolioName = button.datase      
+                this.selectedPortfolio = po      
+                console.log('选中的    portoNa              
+                // 更新当前投资组合名称显示
+                const currentPortfolioNameElement = document.getElementById('currentPortfolioName');
+                if (currentPortfolioNameElement) {
+                    currentPortfolioNameElement.textContent = portfolioName;
+                }
+                
+                console.log('=== 投资组合选择完成 ===');
+            }
+        }
+        
+        // 初始化
+        const portfolioPanel = new PortfolioPanel();
+  </script>
+</body>
+
+</html>

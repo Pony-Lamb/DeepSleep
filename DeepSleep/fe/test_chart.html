@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chart Test</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <div class="p-8">
+    <h1 class="text-2xl font-bold mb-4">Chart Test</h1>
+
+    <!-- 测试图表容器 -->
+    <div class="chart-container h-[500px] mb-6">
+      <div id="stockChart" class="w-full h-full"></div>
+    </div>
+
+    <!-- 测试按钮 -->
+    <button onclick="testChart()" class="bg-blue-500 text-white px-4 py-2 rounded">
+      Test Chart
+    </button>
+
+    <button onclick="testStockDetail()" class="bg-green-500 text-white px-4 py-2 rounded ml-2">
+      Test Stock Detail
+    </button>
+  </div>
+
+  <script>
+    // 模拟 StockDetailPanel 类
+    class TestStockDetailPanel {
+      constructor() {
+        this.myChart = null;
+        this.current_details = {
+          data: {
+            dates: ['2025-01-01', '2025-01-02', '2025-01-03', '2025-01-04', '2025-01-05'],
+            open_prices: [100, 101, 102, 103, 104],
+            close_prices: [101, 102, 103, 104, 105],
+            high_prices: [102, 103, 104, 105, 106],
+            low_prices: [99, 100, 101, 102, 103]
+          }
+        };
+      }
+
+      initStockChart() {
+        const chartDom = document.getElementById('stockChart');
+        if (chartDom) {
+          if (!this.myChart) {
+            this.myChart = echarts.init(chartDom, null, {
+              renderer: 'canvas',
+              useDirtyRect: false
+            });
+          }
+        }
+      }
+
+      extractStockData(days = 30) {
+        console.log("extracting stock data for", days, "days");
+
+        if (!this.current_details || !this.current_details.data) {
+          console.error("Invalid data structure in current_details");
+          return [];
+        }
+
+        const result = [];
+        const data = this.current_details.data;
+
+        for (let i = 0; i < data.dates.length; i++) {
+          const date = new Date(data.dates[i]);
+          const formattedDate = `${date.getMonth() + 1}/${date.getDate()}`;
+
+          result.push([
+            formattedDate,
+            parseFloat(data.open_prices[i]),
+            parseFloat(data.close_prices[i]),
+            parseFloat(data.low_prices[i]),
+            parseFloat(data.high_prices[i])
+          ]);
+        }
+
+        console.log("Extracted", result.length, "data points");
+        return result;
+      }
+
+      calculateBollingerBands(data, period = 14, stdDev = 2) {
+        const closePrices = data.map(item => item[2]);
+        const bollingerData = [];
+
+        for (let i = 0; i < data.length; i++) {
+          if (i < period - 1) {
+            bollingerData.push([null, null, null]);
+            continue;
+          }
+
+          let sum = 0;
+          for (let j = 0; j < period; j++) {
+            sum += closePrices[i - j];
+          }
+          const sma = sum / period;
+
+          let variance = 0;
+          for (let j = 0; j < period; j++) {
+            variance += Math.pow(closePrices[i - j] - sma, 2);
+          }
+          const std = Math.sqrt(variance / period);
+
+          const upper = sma + stdDev * std;
+          const lower = sma - stdDev * std;
+
+          bollingerData.push([upper.toFixed(2) * 1, sma.toFixed(2) * 1, lower.toFixed(2) * 1]);
+        }
+
+        return bollingerData;
+      }
+
+      calculateYAxisRange(data) {
+        const allPrices = [];
+        data.forEach(item => {
+          allPrices.push(item[1]);
+          allPrices.push(item[2]);
+          allPrices.push(item[3]);
+          allPrices.push(item[4]);
+        });
+
+        const min = Math.min(...allPrices);
+        const max = Math.max(...allPrices);
+        const range = max - min;
+        const padding = range * 0.1;
+
+        return [Math.floor(min - padding), Math.ceil(max + padding)];
+      }
+
+      updateChart(days) {
+        if (!this.myChart) {
+          this.initStockChart();
+        }
+        if (!this.myChart) {
+          console.error('Chart not initialized');
+          return;
+        }
+
+        const stockData = this.extractStockData(days);
+        const bollingerData = this.calculateBollingerBands(stockData);
+        const [yMin, yMax] = this.calculateYAxisRange(stockData);
+
+        const option = {
+          backgroundColor: 'transparent',
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'cross',
+            },
+          },
+          grid: {
+            left: '10',
+            right: '10',
+            bottom: '30',
+            top: '30',
+            containLabel: true,
+          },
+          xAxis: {
+            type: 'category',
+            data: stockData.map(item => item[0]),
+            axisLine: {
+              lineStyle: {
+                color: '#D1D5DB',
+              },
+            },
+            axisLabel: {
+              color: '#6B7280',
+            },
+            splitLine: {
+              lineStyle: {
+                color: '#E5E7EB',
+              },
+            },
+          },
+          yAxis: {
+            type: 'value',
+            min: yMin,
+            max: yMax,
+            axisLine: {
+              lineStyle: {
+                color: '#475569',
+              },
+            },
+            axisLabel: {
+              color: '#94A3B8',
+              formatter: '{value}',
+            },
+            splitLine: {
+              lineStyle: {
+                color: 'rgba(71, 85, 105, 0.2)',
+              },
+            },
+          },
+          series: [
+            {
+              type: 'candlestick',
+              data: stockData.map(item => [item[1], item[2], item[3], item[4]]),
+              itemStyle: {
+                color: '#EF4444',
+                color0: '#10B981',
+                borderColor: '#EF4444',
+                borderColor0: '#10B981',
+              },
+              emphasis: {
+                itemStyle: {
+                  color: '#34D399',
+                  color0: '#F87171',
+                  borderColor: '#34D399',
+                  borderColor0: '#F87171',
+                },
+              },
+              tooltip: {
+                formatter: null,
+              },
+            },
+            {
+              type: 'line',
+              name: 'Bollinger Upper',
+              data: bollingerData.map(item => item[0]),
+              lineStyle: {
+                color: '#60A5FA',
+                width: 1,
+              },
+              showSymbol: false,
+              tooltip: {
+                formatter: null,
+              },
+            },
+            {
+              type: 'line',
+              name: 'Bollinger Middle (SMA)',
+              data: bollingerData.map(item => item[1]),
+              lineStyle: {
+                color: '#FBBF24',
+                width: 1.5,
+              },
+              showSymbol: false,
+              tooltip: {
+                formatter: null,
+              },
+            },
+            {
+              type: 'line',
+              name: 'Bollinger Lower',
+              data: bollingerData.map(item => item[2]),
+              lineStyle: {
+                color: '#60A5FA',
+                width: 1,
+              },
+              showSymbol: false,
+              tooltip: {
+                formatter: null,
+              },
+            },
+          ],
+        };
+
+        this.myChart.setOption(option);
+        console.log('Chart updated successfully');
+      }
+    }
+
+    let testPanel;
+
+    function testChart() {
+      if (!testPanel) {
+        testPanel = new TestStockDetailPanel();
+      }
+      testPanel.updateChart(5);
+    }
+
+    function testStockDetail() {
+      console.log('Testing stock detail functionality...');
+      // 这里可以添加更多测试
+    }
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('Test page loaded');
+    });
+  </script>
+</body>
+
+</html>

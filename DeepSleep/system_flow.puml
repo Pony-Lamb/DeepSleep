@@ -1,0 +1,109 @@
+@startuml DeepSleep System Flow
+
+title DeepSleep Investment Management System Flow
+
+actor User
+participant "Frontend" as FE
+participant "API Service" as API
+participant "Backend Routes" as BE
+participant "Database" as DB
+
+== User Authentication & Home Dashboard ==
+User -> FE: Access Application
+FE -> API: GET /api/v1/users/{user_id}
+API -> BE: User Routes
+BE -> DB: Query user_info
+DB -> BE: Return user data
+BE -> API: JSON response
+API -> FE: Display user info
+
+FE -> API: GET /api/v1/asset/total/{user_id}
+API -> BE: Asset Routes
+BE -> DB: Query portfolio + assets
+DB -> BE: Return holdings & prices
+BE -> API: Calculate total asset
+API -> FE: Display total asset
+
+== Asset Trading ==
+User -> FE: Search Assets
+FE -> API: POST /api/v1/asset/search
+API -> BE: Asset Routes
+BE -> DB: Query assets table
+DB -> BE: Return asset list
+BE -> API: Format results
+API -> FE: Display search results
+
+User -> FE: Buy Assets
+FE -> API: POST /api/v1/asset/buy/{user_id}
+API -> BE: Asset Routes
+BE -> DB: Check funds & add to portfolio
+DB -> BE: Confirm transaction
+BE -> API: Success response
+API -> FE: Confirm purchase
+
+== Portfolio Management ==
+User -> FE: View Portfolio
+FE -> API: GET /api/v1/portfolio/name/{user_id}
+API -> BE: Portfolio Routes
+BE -> DB: Query portfolio table
+DB -> BE: Return portfolios
+BE -> API: Portfolio list
+API -> FE: Display portfolios
+
+User -> FE: View Portfolio Details
+FE -> API: GET /api/v1/portfolio/{portfolio_id}
+API -> BE: Portfolio Routes
+BE -> DB: Query holdings
+DB -> BE: Return holdings
+BE -> API: Portfolio details
+API -> FE: Display holdings
+
+User -> FE: Export Portfolio Report
+FE -> API: GET /api/v1/portfolio/export/{user_id}/{portfolio_name}
+API -> BE: Portfolio Routes
+BE -> DB: Query portfolio data
+DB -> BE: Return portfolio info
+BE -> API: Generate PDF report
+API -> FE: Download PDF file
+
+User -> FE: Sell Assets
+FE -> API: POST /api/v1/asset/sell/{asset_id}/{user_id}
+API -> BE: Asset Routes
+BE -> DB: Update holdings
+DB -> BE: Confirm update
+BE -> API: Success response
+API -> FE: Confirm sale
+
+== Asset Details & Analysis ==
+User -> FE: View Asset Details
+FE -> API: GET /api/v1/asset/{asset_id}
+API -> BE: Asset Routes
+BE -> DB: Query asset info
+DB -> BE: Return asset data
+BE -> API: Asset details
+API -> FE: Display asset info
+
+User -> FE: View Price History
+FE -> API: GET /api/v1/asset/prev/{asset_id}
+API -> BE: Asset Routes
+BE -> DB: Query historical prices
+DB -> BE: Return price history
+BE -> API: Price data
+API -> FE: Display charts
+
+== Profit Tracking ==
+FE -> API: GET /api/v1/profit/{user_id}
+API -> BE: Profit Routes
+BE -> DB: Calculate profit from holdings
+DB -> BE: Return profit data
+BE -> API: Profit calculation
+API -> FE: Display profit
+
+FE -> API: GET /api/v1/asset/total/allocation/{user_id}
+API -> BE: Asset Routes
+BE -> DB: Calculate asset allocation
+DB -> BE: Return allocation data
+BE -> API: Allocation breakdown
+API -> FE: Display allocation chart
+
+@enduml 

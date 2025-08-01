@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API测试</title>
+</head>
+
+<body>
+  <h1>API测试页面</h1>
+  <button onclick="testSearchAPI()">测试搜索API</button>
+  <button onclick="testAssetDetailAPI()">测试资产详情API</button>
+  <div id="results"></div>
+
+  <script>
+    const baseUrl = 'http://localhost:5000/api/v1';
+
+    async function makeRequest(endpoint, options = {}) {
+      const url = `${baseUrl}${endpoint}`;
+      console.log('API请求URL:', url);
+
+      try {
+        const response = await fetch(url, {
+          headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+          },
+          ...options
+        });
+
+        console.log('API响应状态:', response.status);
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('API错误响应:', errorText);
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('API响应数据:', data);
+        return data;
+      } catch (error) {
+        console.error('API请求错误:', error);
+        throw error;
+      }
+    }
+
+    async function testSearchAPI() {
+      try {
+        const currentDate = new Date().toISOString().split('T')[0];
+        const params = new URLSearchParams({
+          content: 'AAPL',
+          date: currentDate
+        });
+
+        const response = await makeRequest(`/asset/search?${params}`, {
+          method: 'POST'
+        });
+
+        document.getElementById('results').innerHTML = `
+                    <h3>搜索API结果:</h3>
+                    <pre>${JSON.stringify(response, null, 2)}</pre>
+                `;
+      } catch (error) {
+        document.getElementById('results').innerHTML = `
+                    <h3>搜索API错误:</h3>
+                    <pre>${error.message}</pre>
+                `;
+      }
+    }
+
+    async function testAssetDetailAPI() {
+      try {
+        const response = await makeRequest('/asset/AAPL');
+
+        document.getElementById('results').innerHTML = `
+                    <h3>资产详情API结果:</h3>
+                    <pre>${JSON.stringify(response, null, 2)}</pre>
+                `;
+      } catch (error) {
+        document.getElementById('results').innerHTML = `
+                    <h3>资产详情API错误:</h3>
+                    <pre>${error.message}</pre>
+                `;
+      }
+    }
+  </script>
+</body>
+
+</html>

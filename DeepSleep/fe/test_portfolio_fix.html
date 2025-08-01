@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>投资组合选项修复测试</title>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50">
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-8">投资组合选项修复测试</h1>
+
+    <!-- 测试按钮 -->
+    <div class="mb-8 space-y-4">
+      <button onclick="testPortfolioOptions()" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+        测试投资组合选项加载
+      </button>
+      <button onclick="testCreatePortfolio()" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700">
+        测试创建新投资组合
+      </button>
+    </div>
+
+    <!-- 测试结果 -->
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+      <h2 class="text-xl font-semibold mb-4">测试结果</h2>
+      <div id="test-result" class="text-sm font-mono bg-gray-100 p-4 rounded max-h-96 overflow-y-auto">
+        点击测试按钮开始...
+      </div>
+    </div>
+
+    <!-- API测试 -->
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+      <h2 class="text-xl font-semibold mb-4">API测试</h2>
+      <div class="space-y-4">
+        <button onclick="testGetPortfolioNames()"
+          class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">
+          测试获取投资组合列表
+        </button>
+        <button onclick="testCreatePortfolioAPI()"
+          class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700">
+          测试创建投资组合API
+        </button>
+      </div>
+      <div id="api-result" class="mt-4 text-sm font-mono bg-gray-100 p-4 rounded max-h-64 overflow-y-auto">
+        API测试结果将显示在这里...
+      </div>
+    </div>
+  </div>
+
+  <!-- 买入模态框 -->
+  <div id="tradeModal" class="modal-overlay">
+    <div class="flex items-center justify-center h-full">
+      <div class="modal-content p-8 w-11/12 max-w-md">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-bold text-gray-800">Buy Stock</h3>
+          <button onclick="closeTradeModal()">
+            <iconify-icon icon="mdi:close" class="text-2xl"></iconify-icon>
+          </button>
+        </div>
+        <div class="mb-6">
+          <label class="block text-gray-700 mb-2">Select Portfolio</label>
+          <div class="flex items-center gap-2">
+            <select id="trade-portfolio-select" class="w-full p-3 border border-gray-300 rounded-lg font-medium">
+              <option value="">加载中...</option>
+            </select>
+            <button class="px-3 py-1 bg-blue-100 text-blue-700 rounded" type="button"
+              onclick="showNewPortfolioModalFromTrade()">
+              <iconify-icon icon="mdi:plus"></iconify-icon>
+            </button>
+          </div>
+        </div>
+        <div class="mb-6">
+          <label class="block text-gray-700 mb-2">Quantity</label>
+          <input id="trade-quantity-input" type="number" min="1" value="1"
+            class="w-full p-3 border border-gray-300 rounded-lg font-medium">
+        </div>
+        <div class="flex">
+          <button class="flex-1 mr-3 py-3 bg-gray-100 rounded-xl font-bold" onclick="closeTradeModal()">Cancel</button>
+          <button class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold flex items-center justify-center"
+            onclick="confirmTrade()">
+            <iconify-icon icon="mdi:cart-check" class="mr-2"></iconify-icon>Confirm Buy
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新建投资组合模态框 -->
+  <div id="newPortfolioModalFromTrade" class="modal-overlay">
+    <div class="flex items-center justify-center h-full">
+      <div class="modal-content p-8 w-11/12 max-w-md">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-bold text-gray-800">Create New Portfolio</h3>
+          <button onclick="closeNewPortfolioModalFromTrade()">
+            <iconify-icon icon="mdi:close" class="text-2xl"></iconify-icon>
+          </button>
+        </div>
+        <div class="mb-6">
+          <label class="block text-gray-700 mb-2">Portfolio Name</label>
+          <input id="newPortfolioNameFromTrade" type="text" placeholder="Enter portfolio name"
+            class="w-full p-3 border border-gray-300 rounded-lg font-medium">
+        </div>
+        <div class="flex">
+          <button class="flex-1 mr-3 py-3 bg-gray-100 rounded-xl font-bold"
+            onclick="closeNewPortfolioModalFromTrade()">Cancel</button>
+          <button class="flex-1 py-3 bg-green-500 text-white rounded-xl font-bold flex items-center justify-center"
+            onclick="createNewPortfolioFromTrade()">
+            <iconify-icon icon="mdi:plus" class="mr-2"></iconify-icon>Create Portfolio
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 引入必要的脚本 -->
+  <script src="js/api-service.js"></script>
+  <script src="js/home-panel.js"></script>
+  <script src="js/trading-panel.js"></script>
+  <script src="js/portfolio-panel.js"></script>
+  <script src="js/stock-detail-panel.js"></script>
+  <script src="js/modal-handlers.js"></script>
+  <script src="js/main.js"></script>
+
+  <script>
+    // 测试结果显示函数
+    function updateTestResult(message) {
+      const testResult = document.getElementById('test-result');
+      const timestamp = new Date().toLocaleTimeString();
+      testResult.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+      testResult.scrollTop = testResult.scrollHeight;
+    }
+
+    function updateApiResult(message) {
+      const apiResult = document.getElementById('api-result');
+      const timestamp = new Date().toLocaleTimeString();
+      apiResult.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+      apiResult.scrollTop = apiResult.scrollHeight;
+    }
+
+    // 测试投资组合选项加载
+    async function testPortfolioOptions() {
+      updateTestResult('开始测试投资组合选项加载...');
+
+      try {
+        if (typeof modalHandlers !== 'undefined' && modalHandlers) {
+          updateTestResult('✅ modalHandlers 实例存在');
+
+          // 测试显示模态框
+          await modalHandlers.showTradeModalFromTrade('AAPL', 150.00);
+          updateTestResult('✅ 模态框显示成功');
+
+          // 检查投资组合选项
+          const select = document.getElementById('trade-portfolio-select');
+          const options = select.querySelectorAll('option');
+          updateTestResult(`✅ 投资组合选项数量: ${options.length}`);
+
+          options.forEach((option, index) => {
+            updateTestResult(`  - 选项 ${index + 1}: ${option.value}`);
+          });
+        } else {
+          updateTestResult('❌ modalHandlers 实例不存在');
+        }
+      } catch (error) {
+        updateTestResult(`❌ 测试失败: ${error.message}`);
+      }
+    }
+
+    // 测试创建新投资组合
+    async function testCreatePortfolio() {
+      updateTestResult('开始测试创建新投资组合...');
+
+      try {
+        // 显示新建投资组合模态框
+        if (typeof showNewPortfolioModalFromTrade === 'function') {
+          showNewPortfolioModalFromTrade();
+          updateTestResult('✅ 新建投资组合模态框显示成功');
+        } else {
+          updateTestResult('❌ showNewPortfolioModalFromTrade 函数不存在');
+        }
+      } catch (error) {
+        updateTestResult(`❌ 测试失败: ${error.message}`);
+      }
+    }
+
+    // 测试获取投资组合列表API
+    async function testGetPortfolioNames() {
+      updateApiResult('开始测试获取投资组合列表API...');
+
+      try {
+        const response = await apiService.getPortfolioNames();
+        updateApiResult(`API响应: ${JSON.stringify(response, null, 2)}`);
+
+        if (response.code === 200) {
+          updateApiResult('✅ API调用成功');
+          if (response.data && response.data.portfolios) {
+            updateApiResult(`✅ 找到 ${response.data.portfolios.length} 个投资组合`);
+            response.data.portfolios.forEach((portfolio, index) => {
+              updateApiResult(`  - 投资组合 ${index + 1}: ${portfolio}`);
+            });
+          }
+        } else {
+          updateApiResult(`❌ API调用失败: ${response.message}`);
+        }
+      } catch (error) {
+        updateApiResult(`❌ API调用出错: ${error.message}`);
+      }
+    }
+
+    // 测试创建投资组合API
+    async function testCreatePortfolioAPI() {
+      updateApiResult('开始测试创建投资组合API...');
+
+      try {
+        const testPortfolioName = `TestPortfolio_${Date.now()}`;
+        updateApiResult(`测试投资组合名称: ${testPortfolioName}`);
+
+        const response = await apiService.createPortfolio(testPortfolioName);
+        updateApiResult(`API响应: ${JSON.stringify(response, null, 2)}`);
+
+        if (response.code === 200) {
+          updateApiResult('✅ 创建投资组合API调用成功');
+        } else {
+          updateApiResult(`❌ 创建投资组合API调用失败: ${response.message}`);
+        }
+      } catch (error) {
+        updateApiResult(`❌ 创建投资组合API调用出错: ${error.message}`);
+      }
+    }
+
+    // 重写全局函数用于测试
+    const originalShowTradeModal = window.showTradeModal;
+    window.showTradeModal = async function (assetId, price) {
+      updateTestResult(`showTradeModal() 被调用，参数: assetId=${assetId}, price=${price}`);
+
+      if (originalShowTradeModal) {
+        return await originalShowTradeModal.apply(this, arguments);
+      }
+    };
+
+    const originalCreateNewPortfolioFromTrade = window.createNewPortfolioFromTrade;
+    window.createNewPortfolioFromTrade = async function () {
+      updateTestResult('createNewPortfolioFromTrade() 被调用');
+
+      if (originalCreateNewPortfolioFromTrade) {
+        return await originalCreateNewPortfolioFromTrade.apply(this, arguments);
+      }
+    };
+
+    const originalCloseTradeModal = window.closeTradeModal;
+    window.closeTradeModal = function () {
+      updateTestResult('closeTradeModal() 被调用');
+
+      if (originalCloseTradeModal) {
+        return originalCloseTradeModal.apply(this, arguments);
+      }
+    };
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      updateTestResult('页面加载完成，开始初始化...');
+
+      // 等待一段时间后初始化
+      setTimeout(async () => {
+        if (typeof initModalHandlers === 'function') {
+          initModalHandlers();
+          updateTestResult('✅ ModalHandlers 初始化完成');
+        } else {
+          updateTestResult('❌ initModalHandlers 函数不存在');
+        }
+
+        if (typeof initTradingPanel === 'function') {
+          initTradingPanel();
+          updateTestResult('✅ TradingPanel 初始化完成');
+        } else {
+          updateTestResult('❌ initTradingPanel 函数不存在');
+        }
+      }, 1000);
+    });
+  </script>
+</body>
+
+</html>

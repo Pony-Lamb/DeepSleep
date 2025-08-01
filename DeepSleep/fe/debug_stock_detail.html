@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock Detail Debug</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <div class="p-8">
+    <h1 class="text-2xl font-bold mb-4">Stock Detail Debug</h1>
+
+    <!-- 模拟股票详情面板 -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+      <div class="flex flex-col md:flex-row md:items-center justify-between mb-8">
+        <div class="flex items-center mb-6 md:mb-0">
+          <div>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900" id="detail-stock-name">AAPL</h1>
+            <p class="text-gray-500 text-lg" id="detail-stock-symbol">AAPL</p>
+          </div>
+        </div>
+        <div class="flex flex-col items-end">
+          <p class="text-3xl font-bold text-gray-900">$<span id="detail-stock-price">0.00</span></p>
+          <div class="flex items-center mt-2" id="detail-stock-change"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+        <div>
+          <h1 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-gray-900" id="detail-page-title">AAPL Apple Inc.
+          </h1>
+          <p class="text-gray-400">NASDAQ · US Stock</p>
+        </div>
+        <div class="mt-4 md:mt-0 flex items-center">
+          <span class="text-2xl font-bold mr-3 text-rise" id="stock_price_bigcard">0.00</span>
+          <span class="bg-rise/10 text-rise px-2 py-1 rounded text-sm flex items-center" id="change_rate_bigcard">
+            <i class="fa fa-caret-up mr-1"></i>0.00 (0.00%)
+          </span>
+        </div>
+      </div>
+
+      <!-- Stock overview data -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="stock-detail-card">
+          <div class="text-gray-400 text-sm">Open</div>
+          <div class="text-lg font-semibold mt-1">0.00</div>
+        </div>
+        <div class="stock-detail-card">
+          <div class="text-gray-400 text-sm">Close</div>
+          <div class="text-lg font-semibold mt-1 text-rise">0.00</div>
+        </div>
+        <div class="stock-detail-card">
+          <div class="text-gray-400 text-sm">High</div>
+          <div class="text-lg font-semibold mt-1 text-rise">0.00</div>
+        </div>
+        <div class="stock-detail-card">
+          <div class="text-gray-400 text-sm">Low</div>
+          <div class="text-lg font-semibold mt-1">0.00</div>
+        </div>
+      </div>
+
+      <!-- Time period selector -->
+      <div class="flex flex-wrap gap-2 mb-6">
+        <button class="active-period px-4 py-2 rounded-md text-sm font-medium" data-days="30" id="30button">30
+          Days</button>
+        <button class="inactive-period px-4 py-2 rounded-md text-sm font-medium" data-days="60" id="60button">60
+          Days</button>
+        <button class="inactive-period px-4 py-2 rounded-md text-sm font-medium" data-days="90" id="90button">90
+          Days</button>
+      </div>
+
+      <!-- K-line chart container -->
+      <div class="chart-container h-[500px] mb-6">
+        <div id="stockChart" class="w-full h-full"></div>
+      </div>
+    </div>
+
+    <!-- 测试按钮 -->
+    <div class="mt-4 space-x-4">
+      <button onclick="testShowStockDetail()" class="bg-blue-500 text-white px-4 py-2 rounded">
+        Test Show Stock Detail
+      </button>
+
+      <button onclick="testAPI()" class="bg-green-500 text-white px-4 py-2 rounded">
+        Test API Call
+      </button>
+
+      <button onclick="testChart()" class="bg-purple-500 text-white px-4 py-2 rounded">
+        Test Chart Only
+      </button>
+    </div>
+  </div>
+
+  <script src="js/stock-detail-panel.js"></script>
+  <script>
+    let debugPanel;
+
+    function testShowStockDetail() {
+      console.log('Testing showStockDetail...');
+      if (!debugPanel) {
+        debugPanel = new StockDetailPanel();
+      }
+      debugPanel.showStockDetail('AAPL');
+    }
+
+    async function testAPI() {
+      console.log('Testing API call...');
+      if (!debugPanel) {
+        debugPanel = new StockDetailPanel();
+      }
+      const result = await debugPanel.getRealStockData('AAPL');
+      console.log('API result:', result);
+    }
+
+    function testChart() {
+      console.log('Testing chart only...');
+      if (!debugPanel) {
+        debugPanel = new StockDetailPanel();
+      }
+      // 设置模拟数据
+      debugPanel.current_details = {
+        data: {
+          dates: ['2025-01-01', '2025-01-02', '2025-01-03', '2025-01-04', '2025-01-05'],
+          open_prices: [100, 101, 102, 103, 104],
+          close_prices: [101, 102, 103, 104, 105],
+          high_prices: [102, 103, 104, 105, 106],
+          low_prices: [99, 100, 101, 102, 103]
+        }
+      };
+      debugPanel.updateChart(5);
+    }
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('Debug page loaded');
+      setTimeout(() => {
+        initStockDetailPanel();
+      }, 500);
+    });
+  </script>
+</body>
+
+</html>

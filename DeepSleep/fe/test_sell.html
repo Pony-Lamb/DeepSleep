@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>卖出功能测试</title>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50">
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-8">卖出功能测试</h1>
+
+    <!-- 测试按钮 -->
+    <div class="mb-8">
+      <button onclick="testSellModal()" class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700">
+        测试卖出模态框
+      </button>
+    </div>
+
+    <!-- 模拟持仓数据 -->
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+      <h2 class="text-xl font-semibold mb-4">模拟持仓数据</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-gray-200">
+              <th class="text-left py-3 px-4">资产</th>
+              <th class="text-right py-3 px-4">持仓数量</th>
+              <th class="text-right py-3 px-4">当前价格</th>
+              <th class="text-right py-3 px-4">市值</th>
+              <th class="text-right py-3 px-4">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-gray-100">
+              <td class="py-4 px-4">
+                <div>
+                  <p class="font-semibold text-gray-800">Apple Inc.</p>
+                  <p class="text-sm text-gray-500">AAPL</p>
+                </div>
+              </td>
+              <td class="text-right py-4 px-4 font-medium">100</td>
+              <td class="text-right py-4 px-4 font-bold">$150.00</td>
+              <td class="text-right py-4 px-4 font-bold">$15,000.00</td>
+              <td class="text-right py-4 px-4">
+                <button class="px-3 py-1 bg-red-500 text-white rounded-md" onclick="testSellModal()">
+                  Sell
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 卖出模态框 -->
+  <div id="sellModal" class="modal-overlay">
+    <div class="flex items-center justify-center h-full">
+      <div class="modal-content p-8 w-11/12 max-w-md">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-bold text-gray-800">确认卖出</h3>
+          <button onclick="closeSellModal()">
+            <iconify-icon icon="mdi:close" class="text-2xl"></iconify-icon>
+          </button>
+        </div>
+
+        <div class="flex items-center mb-6">
+          <div>
+            <p class="font-bold text-lg" id="modal-sell-name">Apple Inc. (AAPL)</p>
+            <p class="text-gray-600">当前价格: $<span id="modal-sell-price">0.00</span></p>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <label class="block text-gray-700 mb-3">卖出数量</label>
+          <div class="relative">
+            <input type="number" min="1" value="100" id="sell-quantity-input"
+              class="w-full p-3 border border-gray-300 rounded-lg font-medium">
+            <div class="flex justify-between mt-2 text-sm">
+              <button type="button" class="px-3 py-1 bg-gray-100 rounded hover:bg-gray-200"
+                onclick="this.parentElement.previousElementSibling.stepDown()">
+                <iconify-icon icon="mdi:minus" class="align-middle"></iconify-icon> 1
+              </button>
+              <button type="button" class="px-3 py-1 bg-gray-100 rounded hover:bg-gray-200"
+                onclick="this.parentElement.previousElementSibling.stepUp()">
+                <iconify-icon icon="mdi:plus" class="align-middle"></iconify-icon> 1
+              </button>
+            </div>
+          </div>
+          <p class="text-sm text-gray-500 mt-1" id="holding-info">当前持仓: 100 股</p>
+        </div>
+
+        <div class="mb-6 p-4 bg-blue-50 rounded-xl">
+          <div class="flex justify-between mb-2">
+            <span class="text-gray-700">预估价值</span>
+            <span class="font-bold" id="sell-estimated-value">$15,000.00</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-700">手续费</span>
+            <span class="font-bold">$0.00</span>
+          </div>
+        </div>
+
+        <div class="flex">
+          <button class="flex-1 mr-3 py-3 bg-gray-100 rounded-xl font-bold hover:bg-gray-200"
+            onclick="closeSellModal()">
+            取消
+          </button>
+          <button
+            class="flex-1 py-3 bg-red-600 text-white rounded-xl font-bold flex items-center justify-center hover:bg-red-700"
+            onclick="executeSell()">
+            <iconify-icon icon="mdi:cash-minus" class="mr-2"></iconify-icon>
+            确认卖出
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 模拟API服务
+    const mockApiService = {
+      formatPrice: (price) => parseFloat(price).toFixed(2),
+      getAssetDetail: async (assetId) => ({
+        code: 200,
+        data: {
+          asset_id: assetId,
+          name: 'Apple Inc.',
+          category: 'Technology'
+        }
+      }),
+      sellAsset: async (assetId, quantity) => {
+        // 模拟网络延迟
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return { code: 200, message: 'Successfully sell assets!' };
+      }
+    };
+
+    // 测试卖出模态框
+    function testSellModal() {
+      const modal = document.getElementById('sellModal');
+      if (modal) {
+        modal.style.display = 'flex';
+
+        // 设置测试数据
+        modal.dataset.assetId = 'AAPL';
+        modal.dataset.price = '150.00';
+        modal.dataset.quantity = '100';
+        modal.dataset.portfolioName = 'Test Portfolio';
+
+        // 更新模态框信息
+        updateSellModalInfo('AAPL', 150.00, 100);
+        setupSellQuantityListener();
+      }
+    }
+
+    // 更新卖出模态框信息
+    async function updateSellModalInfo(assetId, price, maxQuantity) {
+      const modal = document.getElementById('sellModal');
+      if (!modal) return;
+
+      // 获取资产详细信息
+      try {
+        const assetResponse = await mockApiService.getAssetDetail(assetId);
+        if (assetResponse.code === 200 && assetResponse.data) {
+          const asset = assetResponse.data;
+
+          // 更新标题
+          const title = modal.querySelector('#modal-sell-name');
+          if (title) {
+            title.textContent = `${asset.name} (${assetId})`;
+          }
+        }
+      } catch (error) {
+        console.error('获取资产详情失败:', error);
+        const title = modal.querySelector('#modal-sell-name');
+        if (title) {
+          title.textContent = `${assetId}`;
+        }
+      }
+
+      // 更新价格显示
+      const priceElement = modal.querySelector('#modal-sell-price');
+      if (priceElement) {
+        priceElement.textContent = mockApiService.formatPrice(price);
+      }
+
+      // 设置最大可卖数量
+      const quantityInput = modal.querySelector('#sell-quantity-input');
+      if (quantityInput) {
+        quantityInput.max = maxQuantity;
+        quantityInput.value = maxQuantity;
+        quantityInput.min = 1;
+      }
+
+      // 显示持仓信息
+      const holdingInfo = modal.querySelector('#holding-info');
+      if (holdingInfo) {
+        holdingInfo.textContent = `当前持仓: ${maxQuantity} 股`;
+      }
+
+      // 更新预估价值
+      updateSellEstimatedValue(price, maxQuantity);
+    }
+
+    // 设置卖出数量监听器
+    function setupSellQuantityListener() {
+      const quantityInput = document.getElementById('sell-quantity-input');
+      const modal = document.getElementById('sellModal');
+
+      if (quantityInput && modal) {
+        const price = parseFloat(modal.dataset.price);
+        const maxQuantity = parseInt(modal.dataset.quantity);
+
+        // 移除之前的监听器
+        quantityInput.removeEventListener('input', window._sellQuantityHandler);
+
+        // 创建新的监听器
+        window._sellQuantityHandler = (e) => {
+          let quantity = parseInt(e.target.value);
+
+          // 验证数量
+          if (quantity > maxQuantity) {
+            quantity = maxQuantity;
+            e.target.value = maxQuantity;
+          } else if (quantity < 1) {
+            quantity = 1;
+            e.target.value = 1;
+          }
+
+          // 更新预估价值
+          updateSellEstimatedValue(price, quantity);
+        };
+
+        quantityInput.addEventListener('input', window._sellQuantityHandler);
+
+        // 添加快速选择按钮
+        setupQuickSelectButtons(maxQuantity);
+      }
+    }
+
+    // 设置快速选择按钮
+    function setupQuickSelectButtons(maxQuantity) {
+      const quantityContainer = document.querySelector('#sellModal .relative');
+      if (quantityContainer && !document.getElementById('quick-select-buttons')) {
+        const quickSelectDiv = document.createElement('div');
+        quickSelectDiv.id = 'quick-select-buttons';
+        quickSelectDiv.className = 'flex gap-2 mt-2';
+
+        const percentages = [25, 50, 75, 100];
+        percentages.forEach(percent => {
+          const quantity = Math.floor(maxQuantity * percent / 100);
+          if (quantity > 0) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200';
+            button.textContent = `${percent}%`;
+            button.onclick = () => {
+              const input = document.getElementById('sell-quantity-input');
+              if (input) {
+                input.value = quantity;
+                input.dispatchEvent(new Event('input'));
+              }
+            };
+            quickSelectDiv.appendChild(button);
+          }
+        });
+
+        quantityContainer.appendChild(quickSelectDiv);
+      }
+    }
+
+    // 更新卖出预估价值
+    function updateSellEstimatedValue(price, quantity) {
+      const estimatedValueElement = document.getElementById('sell-estimated-value');
+      if (estimatedValueElement) {
+        const estimatedValue = price * quantity;
+        estimatedValueElement.textContent = `$${mockApiService.formatPrice(estimatedValue)}`;
+      }
+    }
+
+    // 确认卖出交易
+    async function executeSell() {
+      const modal = document.getElementById('sellModal');
+      if (!modal) return;
+
+      const assetId = modal.dataset.assetId;
+      const price = parseFloat(modal.dataset.price);
+      const maxQuantity = parseInt(modal.dataset.quantity);
+      const quantityInput = document.getElementById('sell-quantity-input');
+
+      if (!assetId || !price || !maxQuantity || !quantityInput) {
+        alert('交易信息不完整');
+        return;
+      }
+
+      const quantity = parseInt(quantityInput.value);
+
+      if (!quantity || quantity <= 0) {
+        alert('请输入有效的卖出数量');
+        return;
+      }
+
+      if (quantity > maxQuantity) {
+        alert('卖出数量不能超过当前持仓');
+        return;
+      }
+
+      try {
+        // 显示加载状态
+        const confirmBtn = modal.querySelector('button[onclick="executeSell()"]');
+        if (confirmBtn) {
+          confirmBtn.disabled = true;
+          confirmBtn.innerHTML = '<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div> 处理中...';
+        }
+
+        // 调用卖出API
+        const response = await mockApiService.sellAsset(assetId, quantity);
+
+        if (response.code === 200) {
+          // 显示成功消息
+          showSuccessMessage(`成功卖出 ${quantity} 股 ${assetId}！`);
+          closeSellModal();
+        } else {
+          showErrorMessage(`卖出失败: ${response.message}`);
+        }
+      } catch (error) {
+        console.error('卖出交易出错:', error);
+        showErrorMessage('卖出交易时发生错误，请重试');
+      } finally {
+        // 恢复按钮状态
+        const confirmBtn = modal.querySelector('button[onclick="executeSell()"]');
+        if (confirmBtn) {
+          confirmBtn.disabled = false;
+          confirmBtn.innerHTML = '<iconify-icon icon="mdi:cash-minus" class="mr-2"></iconify-icon>确认卖出';
+        }
+      }
+    }
+
+    // 显示成功消息
+    function showSuccessMessage(message) {
+      const successDiv = document.createElement('div');
+      successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+      successDiv.innerHTML = `
+                <div class="flex items-center">
+                    <iconify-icon icon="mdi:check-circle" class="mr-2"></iconify-icon>
+                    <span>${message}</span>
+                </div>
+            `;
+
+      document.body.appendChild(successDiv);
+
+      setTimeout(() => {
+        if (successDiv.parentNode) {
+          successDiv.parentNode.removeChild(successDiv);
+        }
+      }, 3000);
+    }
+
+    // 显示错误消息
+    function showErrorMessage(message) {
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+      errorDiv.innerHTML = `
+                <div class="flex items-center">
+                    <iconify-icon icon="mdi:alert-circle" class="mr-2"></iconify-icon>
+                    <span>${message}</span>
+                </div>
+            `;
+
+      document.body.appendChild(errorDiv);
+
+      setTimeout(() => {
+        if (errorDiv.parentNode) {
+          errorDiv.parentNode.removeChild(errorDiv);
+        }
+      }, 5000);
+    }
+
+    // 关闭卖出模态框
+    function closeSellModal() {
+      const modal = document.getElementById('sellModal');
+      if (modal) {
+        modal.style.display = 'none';
+
+        // 移除数量输入监听器
+        const quantityInput = document.getElementById('sell-quantity-input');
+        if (quantityInput && window._sellQuantityHandler) {
+          quantityInput.removeEventListener('input', window._sellQuantityHandler);
+        }
+
+        // 清理数据
+        delete modal.dataset.assetId;
+        delete modal.dataset.price;
+        delete modal.dataset.quantity;
+        delete modal.dataset.portfolioName;
+      }
+    }
+  </script>
+</body>
+
+</html>

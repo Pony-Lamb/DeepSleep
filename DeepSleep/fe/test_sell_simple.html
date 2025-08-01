@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>卖出功能简单测试</title>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50">
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-8">卖出功能简单测试</h1>
+
+    <!-- 测试按钮 -->
+    <div class="mb-8">
+      <button onclick="testSell()" class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700">
+        测试卖出功能
+      </button>
+    </div>
+
+    <!-- 状态显示 -->
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+      <h2 class="text-xl font-semibold mb-4">测试状态</h2>
+      <div id="status" class="text-sm font-mono bg-gray-100 p-4 rounded">
+        等待测试...
+      </div>
+    </div>
+  </div>
+
+  <!-- 卖出模态框 -->
+  <div id="sellModal" class="modal-overlay">
+    <div class="flex items-center justify-center h-full">
+      <div class="modal-content p-8 w-11/12 max-w-md">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-bold text-gray-800">确认卖出</h3>
+          <button onclick="closeSellModal()">
+            <iconify-icon icon="mdi:close" class="text-2xl"></iconify-icon>
+          </button>
+        </div>
+
+        <div class="flex items-center mb-6">
+          <div>
+            <p class="font-bold text-lg" id="modal-sell-name">Apple Inc. (AAPL)</p>
+            <p class="text-gray-600">当前价格: $<span id="modal-sell-price">0.00</span></p>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <label class="block text-gray-700 mb-3">卖出数量</label>
+          <div class="relative">
+            <input type="number" min="1" value="100" id="sell-quantity-input"
+              class="w-full p-3 border border-gray-300 rounded-lg font-medium">
+            <div class="flex justify-between mt-2 text-sm">
+              <button type="button" class="px-3 py-1 bg-gray-100 rounded hover:bg-gray-200"
+                onclick="this.parentElement.previousElementSibling.stepDown()">
+                <iconify-icon icon="mdi:minus" class="align-middle"></iconify-icon> 1
+              </button>
+              <button type="button" class="px-3 py-1 bg-gray-100 rounded hover:bg-gray-200"
+                onclick="this.parentElement.previousElementSibling.stepUp()">
+                <iconify-icon icon="mdi:plus" class="align-middle"></iconify-icon> 1
+              </button>
+            </div>
+          </div>
+          <p class="text-sm text-gray-500 mt-1" id="holding-info">当前持仓: 100 股</p>
+        </div>
+
+        <div class="mb-6 p-4 bg-blue-50 rounded-xl">
+          <div class="flex justify-between mb-2">
+            <span class="text-gray-700">预估价值</span>
+            <span class="font-bold" id="sell-estimated-value">$15,000.00</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-700">手续费</span>
+            <span class="font-bold">$0.00</span>
+          </div>
+        </div>
+
+        <div class="flex">
+          <button class="flex-1 mr-3 py-3 bg-gray-100 rounded-xl font-bold hover:bg-gray-200"
+            onclick="closeSellModal()">
+            取消
+          </button>
+          <button
+            class="flex-1 py-3 bg-red-600 text-white rounded-xl font-bold flex items-center justify-center hover:bg-red-700"
+            onclick="executeSell()">
+            <iconify-icon icon="mdi:cash-minus" class="mr-2"></iconify-icon>
+            确认卖出
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 引入必要的脚本 -->
+  <script src="js/api-service.js"></script>
+  <script src="js/portfolio-panel.js"></script>
+
+  <script>
+    // 状态更新函数
+    function updateStatus(message) {
+      const status = document.getElementById('status');
+      const timestamp = new Date().toLocaleTimeString();
+      status.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+      status.scrollTop = status.scrollHeight;
+    }
+
+    // 测试卖出功能
+    function testSell() {
+      updateStatus('开始测试卖出功能...');
+
+      // 检查函数是否存在
+      if (typeof executeSell === 'function') {
+        updateStatus('✅ executeSell 函数存在');
+      } else {
+        updateStatus('❌ executeSell 函数不存在');
+        return;
+      }
+
+      if (typeof closeSellModal === 'function') {
+        updateStatus('✅ closeSellModal 函数存在');
+      } else {
+        updateStatus('❌ closeSellModal 函数不存在');
+        return;
+      }
+
+      // 检查 portfolioPanel 是否存在
+      if (typeof portfolioPanel !== 'undefined' && portfolioPanel) {
+        updateStatus('✅ portfolioPanel 实例存在');
+
+        if (typeof portfolioPanel.confirmSell === 'function') {
+          updateStatus('✅ portfolioPanel.confirmSell 方法存在');
+        } else {
+          updateStatus('❌ portfolioPanel.confirmSell 方法不存在');
+        }
+      } else {
+        updateStatus('❌ portfolioPanel 实例不存在');
+      }
+
+      // 显示模态框
+      const modal = document.getElementById('sellModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        updateStatus('✅ 模态框显示成功');
+
+        // 设置测试数据
+        modal.dataset.assetId = 'AAPL';
+        modal.dataset.price = '150.00';
+        modal.dataset.quantity = '100';
+        modal.dataset.portfolioName = 'Test Portfolio';
+
+        updateStatus('✅ 测试数据设置完成');
+        updateStatus('请点击"确认卖出"按钮测试功能');
+      } else {
+        updateStatus('❌ 找不到模态框元素');
+      }
+    }
+
+    // 重写 executeSell 函数用于测试
+    const originalExecuteSell = window.executeSell;
+    window.executeSell = function () {
+      updateStatus('executeSell() 被调用');
+
+      if (originalExecuteSell) {
+        updateStatus('调用原始的 executeSell 函数');
+        return originalExecuteSell.apply(this, arguments);
+      } else {
+        updateStatus('❌ 原始的 executeSell 函数不存在');
+        alert('executeSell 函数未正确加载');
+      }
+    };
+
+    // 重写 closeSellModal 函数用于测试
+    const originalCloseSellModal = window.closeSellModal;
+    window.closeSellModal = function () {
+      updateStatus('closeSellModal() 被调用');
+
+      if (originalCloseSellModal) {
+        updateStatus('调用原始的 closeSellModal 函数');
+        return originalCloseSellModal.apply(this, arguments);
+      } else {
+        updateStatus('❌ 原始的 closeSellModal 函数不存在');
+        alert('closeSellModal 函数未正确加载');
+      }
+    };
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      updateStatus('页面加载完成，开始初始化...');
+
+      // 等待一段时间后初始化
+      setTimeout(() => {
+        if (typeof initPortfolioPanel === 'function') {
+          initPortfolioPanel();
+          updateStatus('✅ PortfolioPanel 初始化完成');
+        } else {
+          updateStatus('❌ initPortfolioPanel 函数不存在');
+        }
+      }, 1000);
+    });
+  </script>
+</body>
+
+</html>

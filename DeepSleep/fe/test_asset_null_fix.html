@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asset Null 问题修复测试</title>
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .test-section {
+      margin-bottom: 30px;
+      padding: 20px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+    }
+
+    .test-section h3 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    .test-button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    .test-button:hover {
+      background: #0056b3;
+    }
+
+    .result {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+
+    .success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .warning {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+
+    .info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Asset Null 问题修复测试</h1>
+
+    <div class="test-section">
+      <h3>1. 测试资产详情API端点</h3>
+      <p>测试后端是否正确处理无效的asset_id</p>
+      <button class="test-button" onclick="testAssetDetailAPI()">测试资产详情API</button>
+      <div id="assetDetailResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>2. 测试投资组合详情API端点</h3>
+      <p>测试后端是否正确过滤无效的asset_id</p>
+      <input type="text" id="portfolioName" placeholder="输入投资组合名称" value="My Portfolio"
+        style="padding: 8px; margin-right: 10px;">
+      <button class="test-button" onclick="testPortfolioDetailsAPI()">测试投资组合详情API</button>
+      <div id="portfolioDetailsResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>3. 测试前端持仓渲染</h3>
+      <p>测试前端是否正确处理无效的asset_id</p>
+      <button class="test-button" onclick="testFrontendHoldings()">测试前端持仓渲染</button>
+      <div id="frontendResult" class="result"></div>
+    </div>
+  </div>
+
+  <script>
+    class ApiService {
+      constructor() {
+        this.baseUrl = 'http://localhost:5000/api/v1';
+      }
+
+      async makeRequest(endpoint, options = {}) {
+        const url = `${this.baseUrl}${endpoint}`;
+        console.log('API请求:', url);
+
+        try {
+          const response = await fetch(url, {
+            headers: {
+              'Content-Type': 'application/json',
+              ...options.headers
+            },
+            ...options
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error('API请求错误:', error);
+          throw error;
+        }
+      }
+
+      async getAssetDetail(assetId) {
+        return await this.makeRequest(`/asset/${assetId}`);
+      }
+
+      async getPortfolioDetails(portfolioName) {
+        return await this.makeRequest(`/portfolio/details?name=${encodeURIComponent(portfolioName)}`);
+      }
+    }
+
+    const apiService = new ApiService();
+
+    function addResult(elementId, message, type = 'info') {
+      const element = document.getElementById(elementId);
+      element.className = `result ${type}`;
+      element.textContent = message;
+    }
+
+    async function testAssetDetailAPI() {
+      addResult('assetDetailResult', '正在测试...', 'info');
+
+      const testCases = ['null', 'undefined', '', 'INVALID_ASSET'];
+      let results = [];
+
+      for (const assetId of testCases) {
+        try {
+          const response = await apiService.getAssetDetail(assetId);
+          results.push(`✅ asset_id="${assetId}": 成功 (${response.code})`);
+        } catch (error) {
+          if (error.message.includes('400')) {
+            results.push(`✅ asset_id="${assetId}": 正确返回400错误`);
+          } else if (error.message.includes('404')) {
+            results.push(`✅ asset_id="${assetId}": 正确返回404错误`);
+          } else {
+            results.push(`❌ asset_id="${assetId}": ${error.message}`);
+          }
+        }
+      }
+
+      addResult('assetDetailResult', results.join('\n'), 'success');
+    }
+
+    async function testPortfolioDetailsAPI() {
+      addResult('portfolioDetailsResult', '正在测试...', 'info');
+
+      const portfolioName = document.getElementById('portfolioName').value;
+      if (!portfolioName) {
+        addResult('portfolioDetailsResult', '请输入投资组合名称', 'error');
+        return;
+      }
+
+      try {
+        const response = await apiService.getPortfolioDetails(portfolioName);
+
+        if (response.code === 200) {
+          const holdings = response.data || [];
+          const invalidHoldings = holdings.filter(h => !h.asset_id || h.asset_id === 'null');
+
+          let result = `✅ 成功获取投资组合详情\n`;
+          result += `投资组合: ${portfolioName}\n`;
+          result += `持仓数量: ${holdings.length}\n`;
+
+          if (invalidHoldings.length > 0) {
+            result += `⚠️ 发现 ${invalidHoldings.length} 个无效的asset_id:\n`;
+            invalidHoldings.forEach(h => {
+              result += `  - asset_id: ${h.asset_id}, quantity: ${h.quantity}\n`;
+            });
+            addResult('portfolioDetailsResult', result, 'warning');
+          } else {
+            result += `✅ 所有持仓都有有效的asset_id`;
+            addResult('portfolioDetailsResult', result, 'success');
+          }
+        } else {
+          addResult('portfolioDetailsResult', `API返回错误: ${response.message}`, 'error');
+        }
+      } catch (error) {
+        addResult('portfolioDetailsResult', `请求失败: ${error.message}`, 'error');
+      }
+    }
+
+    async function testFrontendHoldings() {
+      addResult('frontendResult', '正在测试...', 'info');
+
+      // 模拟前端持仓渲染逻辑
+      const mockHoldings = [
+        { asset_id: 'AAPL', quantity: 10 },
+        { asset_id: null, quantity: 5 },
+        { asset_id: 'MSFT', quantity: 8 },
+        { asset_id: 'null', quantity: 3 },
+        { asset_id: 'GOOGL', quantity: 12 }
+      ];
+
+      let results = [];
+      let processedCount = 0;
+      let skippedCount = 0;
+
+      for (const holding of mockHoldings) {
+        // 模拟前端的检查逻辑
+        if (!holding.asset_id || holding.asset_id === 'null' || holding.asset_id === 'undefined') {
+          results.push(`⚠️ 跳过无效的asset_id: ${holding.asset_id}`);
+          skippedCount++;
+          continue;
+        }
+
+        try {
+          // 模拟调用API
+          const response = await apiService.getAssetDetail(holding.asset_id);
+          results.push(`✅ 成功获取资产详情: ${holding.asset_id}`);
+          processedCount++;
+        } catch (error) {
+          results.push(`❌ 获取资产详情失败: ${holding.asset_id} - ${error.message}`);
+          skippedCount++;
+        }
+      }
+
+      const summary = `\n总结:\n- 处理的持仓: ${processedCount}\n- 跳过的持仓: ${skippedCount}\n- 总持仓: ${mockHoldings.length}`;
+
+      addResult('frontendResult', results.join('\n') + summary, 'success');
+    }
+  </script>
+</body>
+
+</html>

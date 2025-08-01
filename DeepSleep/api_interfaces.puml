@@ -1,0 +1,126 @@
+@startuml DeepSleep API Interfaces
+
+title DeepSleep Investment Management System - API Interfaces
+
+package "User Management APIs" {
+    [GET /api/v1/users/{user_id}] as GET_USER
+    note right of GET_USER
+      Get user personal information
+      Returns: user_id, name, available_funds
+    end note
+}
+
+package "Asset Management APIs" {
+    [GET /api/v1/asset/total/{user_id}] as GET_TOTAL_ASSET
+    [GET /api/v1/asset/total/allocation/{user_id}] as GET_ASSET_ALLOCATION
+    [GET /api/v1/asset/{asset_id}] as GET_ASSET_DETAILS
+    [GET /api/v1/asset/prev/{asset_id}] as GET_ASSET_HISTORY
+    [POST /api/v1/asset/search] as SEARCH_ASSETS
+    [POST /api/v1/asset/buy/{user_id}] as BUY_ASSETS
+    [POST /api/v1/asset/sell/{asset_id}/{user_id}] as SELL_ASSETS
+    
+    note right of GET_TOTAL_ASSET
+      Calculate total asset value
+      from all portfolios
+    end note
+    
+    note right of GET_ASSET_ALLOCATION
+      Get asset allocation breakdown
+      by asset type (stocks/cash/bonds)
+    end note
+    
+    note right of SEARCH_ASSETS
+      Search assets by content
+      Returns filtered asset list
+    end note
+    
+    note right of BUY_ASSETS
+      Buy assets and add to portfolio
+      Updates user funds and holdings
+    end note
+    
+    note right of SELL_ASSETS
+      Sell assets from portfolio
+      Updates holdings and user funds
+    end note
+}
+
+package "Portfolio Management APIs" {
+    [GET /api/v1/portfolio/name/{user_id}] as GET_PORTFOLIO_NAMES
+    [POST /api/v1/portfolio/create/{user_id}] as CREATE_PORTFOLIO
+    [GET /api/v1/portfolio/{portfolio_id}] as GET_PORTFOLIO_DETAILS
+    
+    note right of GET_PORTFOLIO_NAMES
+      Get all portfolio names
+      for a specific user
+    end note
+    
+    note right of CREATE_PORTFOLIO
+      Create new portfolio
+      with specified name
+    end note
+    
+    note right of GET_PORTFOLIO_DETAILS
+      Get detailed holdings
+      for specific portfolio
+    end note
+}
+
+package "Profit Tracking APIs" {
+    [GET /api/v1/profit/{user_id}] as GET_PROFIT
+    [GET /api/v1/profit/prev/{user_id}] as GET_PREV_PROFIT
+    
+    note right of GET_PROFIT
+      Calculate current profit
+      for total or specific portfolio
+    end note
+    
+    note right of GET_PREV_PROFIT
+      Get profit history
+      for specified date range
+    end note
+}
+
+' Request/Response Examples
+note top of GET_USER
+  Request: GET /api/v1/users/1
+  Response: {
+    "code": 200,
+    "data": {
+      "user_id": 1,
+      "name": "张三",
+      "available_funds": 50000.0
+    }
+  }
+end note
+
+note top of SEARCH_ASSETS
+  Request: POST /api/v1/asset/search
+  Body: {"content": "AAPL", "date": "2023-05-01"}
+  Response: Array of asset objects with prices
+end note
+
+note top of BUY_ASSETS
+  Request: POST /api/v1/asset/buy/1
+  Body: {
+    "asset_id": "AAPL",
+    "portfolio_name": "科技爱好者",
+    "num": 10,
+    "date": "2023-05-01"
+  }
+end note
+
+note top of GET_PROFIT
+  Request: GET /api/v1/profit/1?date=2023-05-01&portfolio_name=科技爱好者
+  Response: {"total_profit": "180.00"}
+end note
+
+' API Categories
+GET_USER -[hidden]d-> GET_TOTAL_ASSET
+GET_TOTAL_ASSET -[hidden]d-> GET_ASSET_ALLOCATION
+GET_ASSET_ALLOCATION -[hidden]d-> SEARCH_ASSETS
+SEARCH_ASSETS -[hidden]d-> BUY_ASSETS
+BUY_ASSETS -[hidden]d-> GET_PORTFOLIO_NAMES
+GET_PORTFOLIO_NAMES -[hidden]d-> GET_PROFIT
+
+@enduml 

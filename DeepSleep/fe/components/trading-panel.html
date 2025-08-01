@@ -1,0 +1,90 @@
+<section id="tradingPanel" class="pt-8">
+  <!-- Top Bar with Search -->
+  <div class="mx-auto px-12 max-w-6xl">
+    <div class="relative mb-10">
+      <div class="flex">
+        <iconify-icon icon="mdi:search" class="absolute left-4 top-4 text-2xl text-gray-400"></iconify-icon>
+        <input type="text" placeholder="Search stocks by name or symbol..."
+          class="w-full py-4 pl-12 pr-5 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none shadow-sm"
+          oninput="showSearchResults()">
+      </div>
+      <div id="searchResults" class="search-results mt-2 p-3"></div>
+    </div>
+
+    <h2 class="text-3xl font-bold text-gray-800 mb-8">Stocks Market Overview</h2>
+
+    <!-- Stock Cards Grid -->
+    <div id="stockCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- 动态加载的股票卡片将在这里显示 -->
+      <div class="flex justify-center items-center col-span-full">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <span class="ml-2 text-gray-600">正在加载股票数据...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trade Modal -->
+  <div id="tradeModal" class="modal-overlay">
+    <div class="flex items-center justify-center h-full">
+      <div class="modal-content p-8 w-11/12 max-w-md">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-bold text-gray-800">Buy Stock</h3>
+          <button onclick="closeTradeModal()">
+            <iconify-icon icon="mdi:close" class="text-2xl"></iconify-icon>
+          </button>
+        </div>
+        <div class="mb-6">
+          <label class="block text-gray-700 mb-2">Select Portfolio</label>
+          <div class="flex items-center gap-2">
+            <select id="trade-portfolio-select"
+              class="w-full p-3 border border-gray-300 rounded-lg font-medium"></select>
+            <button class="px-3 py-1 bg-blue-100 text-blue-700 rounded" onclick="showNewPortfolioModalFromTrade()"
+              type="button">
+              <iconify-icon icon="mdi:plus"></iconify-icon>
+            </button>
+          </div>
+        </div>
+        <div class="mb-6">
+          <label class="block text-gray-700 mb-2">Quantity</label>
+          <input id="trade-quantity-input" type="number" min="1" value="1"
+            class="w-full p-3 border border-gray-300 rounded-lg font-medium">
+        </div>
+        <div class="flex">
+          <button class="flex-1 mr-3 py-3 bg-gray-100 rounded-xl font-bold" onclick="closeTradeModal()">Cancel</button>
+          <button class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold flex items-center justify-center"
+            onclick="confirmTrade()">
+            <iconify-icon icon="mdi:cart-check" class="mr-2"></iconify-icon>Confirm Buy
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增Portfolio弹窗 -->
+  <div id="newPortfolioModalFromTrade" class="modal-overlay">
+    <div class="flex items-center justify-center h-full">
+      <div class="modal-content p-8 w-11/12 max-w-md">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-bold text-gray-800">Create New Portfolio</h3>
+          <button onclick="closeNewPortfolioModalFromTrade()">
+            <iconify-icon icon="mdi:close" class="text-2xl"></iconify-icon>
+          </button>
+        </div>
+        <div class="mb-6">
+          <label class="block text-gray-700 mb-2">Portfolio Name</label>
+          <input id="newPortfolioNameFromTrade" type="text" placeholder="Enter portfolio name"
+            class="w-full p-3 border border-gray-300 rounded-lg font-medium">
+        </div>
+        <div class="flex">
+          <button class="flex-1 mr-3 py-3 bg-gray-100 rounded-xl font-bold"
+            onclick="closeNewPortfolioModalFromTrade()">Cancel</button>
+          <button class="flex-1 py-3 bg-green-500 text-white rounded-xl font-bold flex items-center justify-center"
+            onclick="createNewPortfolioFromTrade()">
+            <iconify-icon icon="mdi:plus" class="mr-2"></iconify-icon>Create Portfolio
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>

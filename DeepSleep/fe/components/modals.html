@@ -1,0 +1,204 @@
+<div id="sellModal" class="modal-overlay">
+  <div class="modal-content p-8 w-11/12 max-w-md">
+    <div class="flex justify-between items-center mb-6">
+      <h3 class="text-xl font-bold text-gray-800">Confirm Sale</h3>
+      <button onclick="closeSellModal()">
+        <iconify-icon icon="mdi:close" class="text-2xl"></iconify-icon>
+      </button>
+    </div>
+
+    <div class="flex items-center mb-6">
+
+      <div>
+        <p class="font-bold text-lg" id="modal-sell-name">Apple Inc. (AAPL)</p>
+        <p class="text-gray-600">Current price: $<span id="modal-sell-price">0.00</span></p>
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <label class="block text-gray-700 mb-3">Quantity to Sell</label>
+      <div class="relative">
+        <input type="number" min="1" value="5" id="sell-quantity-input"
+          class="w-full p-3 border border-gray-300 rounded-lg font-medium">
+        <div class="flex justify-between mt-2 text-sm">
+          <button class="px-3 py-1 bg-gray-100 rounded" onclick="this.parentElement.previousElementSibling.stepDown()">
+            <iconify-icon icon="mdi:minus" class="align-middle"></iconify-icon> 1
+          </button>
+          <button class="px-3 py-1 bg-gray-100 rounded" onclick="this.parentElement.previousElementSibling.stepUp()">
+            <iconify-icon icon="mdi:plus" class="align-middle"></iconify-icon> 1
+          </button>
+        </div>
+      </div>
+      <p class="text-sm text-gray-500 mt-1" id="holding-info">当前持仓: 0 股</p>
+    </div>
+
+    <div class="mb-6 p-4 bg-blue-50 rounded-xl">
+      <div class="flex justify-between mb-2">
+        <span class="text-gray-700">Estimated Value</span>
+        <span class="font-bold">$877.10</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-700">Commission</span>
+        <span class="font-bold">$0.00</span>
+      </div>
+    </div>
+
+    <div class="flex">
+      <button class="flex-1 mr-3 py-3 bg-gray-100 rounded-xl font-bold" onclick="closeSellModal()">
+        Cancel
+      </button>
+      <button class="flex-1 py-3 bg-red-600 text-white rounded-xl font-bold flex items-center justify-center"
+        onclick="executeSell()">
+        <iconify-icon icon="mdi:cart-check" class="mr-2"></iconify-icon>
+        Confirm Sell
+      </button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- New Portfolio Modal -->
+<div id="newPortfolioModal" class="modal-overlay">
+  <div class="modal-content p-8 w-11/12 max-w-md">
+    <div class="flex justify-between items-center mb-6">
+      <h3 class="text-xl font-bold text-gray-800">Create New Portfolio</h3>
+      <button onclick="closeNewPortfolioModal()">
+        <iconify-icon icon="mdi:close" class="text-2xl"></iconify-icon>
+      </button>
+    </div>
+
+    <div class="mb-6">
+      <label class="block text-gray-700 mb-2">Portfolio Name</label>
+      <input type="text" placeholder="Enter portfolio name (2-50 characters)"
+        class="w-full p-3 border border-gray-300 rounded-lg font-medium transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+        id="newPortfolioName" maxlength="50" autocomplete="off">
+      <p class="text-xs text-gray-500 mt-1">Portfolio names must be 2-50 characters and cannot contain special
+        characters.</p>
+    </div>
+
+    <div class="flex">
+      <button class="flex-1 mr-3 py-3 bg-gray-100 rounded-xl font-bold hover:bg-gray-200 transition-colors"
+        onclick="closeNewPortfolioModal()">
+        Cancel
+      </button>
+      <button
+        class="flex-1 py-3 bg-green-500 text-white rounded-xl font-bold flex items-center justify-center hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        onclick="createNewPortfolio()" id="createPortfolioBtn">
+        <iconify-icon icon="mdi:plus" class="mr-2"></iconify-icon>
+        Create Portfolio
+      </button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Add Position Modal -->
+<div id="addPositionModal" class="modal-overlay">
+  <div class="modal-content p-8 w-11/12 max-w-md">
+    <div class="flex justify-between items-center mb-6">
+      <h3 class="text-xl font-bold text-gray-800">Add New Position</h3>
+      <button onclick="closeAddPositionModal()">
+        <iconify-icon icon="mdi:close" class="text-2xl"></iconify-icon>
+      </button>
+    </div>
+
+    <div class="mb-6">
+      <label class="block text-gray-700 mb-2">Select Stock</label>
+      <div class="relative">
+        <input type="text" placeholder="Search for stocks..."
+          class="w-full p-3 border border-gray-300 rounded-lg font-medium" id="stockSearchInput"
+          oninput="searchStocks()">
+        <div id="stockSearchResults" class="search-results mt-2 absolute z-50 w-full bg-white shadow-md rounded-lg">
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <label class="block text-gray-700 mb-2">Quantity</label>
+      <input type="number" min="1" value="10" class="w-full p-3 border border-gray-300 rounded-lg font-medium">
+    </div>
+
+    <div class="mb-6">
+      <label class="block text-gray-700 mb-2">Purchase Price ($)</label>
+      <input type="number" step="0.01" value="100.00" class="w-full p-3 border border-gray-300 rounded-lg font-medium">
+    </div>
+
+    <div class="flex">
+      <button class="flex-1 mr-3 py-3 bg-gray-100 rounded-xl font-bold" onclick="closeAddPositionModal()">
+        Cancel
+      </button>
+      <button class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold flex items-center justify-center"
+        onclick="addNewPosition()">
+        <iconify-icon icon="mdi:plus" class="mr-2"></iconify-icon>
+        Add Position
+      </button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Trade Modal -->
+<div id="tradeModal" class="modal-overlay">
+  <div class="modal-content p-8 w-11/12 max-w-md">
+    <div class="flex justify-between items-center mb-6">
+      <h3 class="text-xl font-bold text-gray-800">Confirm Trade</h3>
+      <button onclick="closeTradeModal()">
+        <iconify-icon icon="mdi:close" class="text-2xl"></iconify-icon>
+      </button>
+    </div>
+
+    <div class="flex items-center mb-6">
+
+      <div>
+        <p class="font-bold text-lg" id="modal-stock-name">Apple Inc. (AAPL)</p>
+        <p class="text-gray-600">Current price: $<span id="modal-stock-price">0.00</span></p>
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <label class="block text-gray-700 mb-3">Quantity</label>
+      <div class="relative">
+        <input type="number" min="1" value="1" id="trade-quantity-input"
+          class="w-full p-3 border border-gray-300 rounded-lg font-medium">
+        <div class="flex justify-between mt-2 text-sm">
+          <button class="px-3 py-1 bg-gray-100 rounded" onclick="this.parentElement.previousElementSibling.stepDown()">
+            <iconify-icon icon="mdi:minus" class="align-middle"></iconify-icon> 1
+          </button>
+          <button class="px-3 py-1 bg-gray-100 rounded" onclick="this.parentElement.previousElementSibling.stepUp()">
+            <iconify-icon icon="mdi:plus" class="align-middle"></iconify-icon> 1
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <label class="block text-gray-700 mb-3">Portfolio</label>
+      <select id="trade-portfolio-select" class="w-full p-3 border border-gray-300 rounded-lg font-medium">
+        <option value="">选择投资组合</option>
+      </select>
+    </div>
+
+    <div class="mb-6 p-4 bg-blue-50 rounded-xl">
+      <div class="flex justify-between mb-2">
+        <span class="text-gray-700">Estimated Cost</span>
+        <span class="font-bold">$1,754.20</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-700">Commission</span>
+        <span class="font-bold">$0.00</span>
+      </div>
+    </div>
+
+    <div class="flex">
+      <button class="flex-1 mr-3 py-3 bg-gray-100 rounded-xl font-bold" onclick="closeTradeModal()">
+        Cancel
+      </button>
+      <button class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold flex items-center justify-center"
+        onclick="confirmTrade()">
+        <iconify-icon icon="mdi:cart-check" class="mr-2"></iconify-icon>
+        Confirm Buy
+      </button>
+    </div>
+  </div>
+</div>
+</div>

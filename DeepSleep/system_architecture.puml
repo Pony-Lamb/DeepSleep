@@ -1,0 +1,188 @@
+@startuml DeepSleep System Architecture
+
+!define RECTANGLE class
+
+title DeepSleep Investment Management System - Architecture Diagram
+
+package "Frontend Layer (fe/)" {
+    [index.html] as INDEX
+    [style.css] as CSS
+    
+    package "Components" {
+        [nav.html] as NAV
+        [home-panel.html] as HOME_PANEL
+        [trading-panel.html] as TRADING_PANEL
+        [portfolio-panel.html] as PORTFOLIO_PANEL
+        [stockDetail-panel.html] as STOCK_DETAIL_PANEL
+        [modals.html] as MODALS
+    }
+    
+    package "JavaScript Modules" {
+        [api-service.js] as API_SERVICE
+        [main.js] as MAIN_JS
+        [home-panel.js] as HOME_JS
+        [trading-panel.js] as TRADING_JS
+        [portfolio-panel.js] as PORTFOLIO_JS
+        [stock-detail-panel.js] as STOCK_DETAIL_JS
+        [modal-handlers.js] as MODAL_HANDLERS
+    }
+}
+
+package "Backend Layer (portfolio_be/)" {
+    [run.py] as RUN_PY
+    
+    package "App Module" {
+        [config.py] as CONFIG
+        [db_connection.py] as DB_CONNECTION
+        
+        package "Routes" {
+            [user_routes.py] as USER_ROUTES
+            [asset_routes.py] as ASSET_ROUTES
+            [portfolio_routes.py] as PORTFOLIO_ROUTES
+            [profit_routes.py] as PROFIT_ROUTES
+        }
+        
+        package "Models" {
+            [user.py] as USER_MODEL
+            [asset.py] as ASSET_MODEL
+            [portfolio.py] as PORTFOLIO_MODEL
+        }
+        
+        package "Utils" {
+            [load_sql_file.py] as SQL_LOADER
+        }
+        
+        package "SQL Queries" {
+            [total_profit.sql] as TOTAL_PROFIT_SQL
+            [portfolio_profit.sql] as PORTFOLIO_PROFIT_SQL
+            [asset_allocation.sql] as ASSET_ALLOCATION_SQL
+            [prev_total_profit.sql] as PREV_PROFIT_SQL
+        }
+    }
+}
+
+package "Database Layer (Data/)" {
+    database "DeepSleep Database" {
+        [assets] as ASSETS_TABLE
+        [portfolio] as PORTFOLIO_TABLE
+        [user_info] as USER_INFO_TABLE
+    }
+    
+    package "Data Management" {
+        [data-insert.sql] as DATA_INSERT
+        [query_asset_value.sql] as QUERY_ASSET
+        [profit.sql] as PROFIT_QUERY
+        [testing_data.sql] as TEST_DATA
+    }
+}
+
+package "External Libraries" {
+    [TailwindCSS] as TAILWIND
+    [ECharts] as ECHARTS
+    [Font Awesome] as FONTAWESOME
+    [Flask] as FLASK
+    [MySQL] as MYSQL
+}
+
+' Frontend Dependencies
+INDEX --> NAV : includes
+INDEX --> HOME_PANEL : includes
+INDEX --> TRADING_PANEL : includes
+INDEX --> PORTFOLIO_PANEL : includes
+INDEX --> STOCK_DETAIL_PANEL : includes
+INDEX --> MODALS : includes
+
+INDEX --> API_SERVICE : loads
+INDEX --> MAIN_JS : loads
+INDEX --> HOME_JS : loads
+INDEX --> TRADING_JS : loads
+INDEX --> PORTFOLIO_JS : loads
+INDEX --> STOCK_DETAIL_JS : loads
+INDEX --> MODAL_HANDLERS : loads
+
+INDEX --> CSS : styles
+INDEX --> TAILWIND : uses
+INDEX --> ECHARTS : uses
+INDEX --> FONTAWESOME : uses
+
+' Backend Dependencies
+RUN_PY --> CONFIG : imports
+RUN_PY --> DB_CONNECTION : imports
+RUN_PY --> USER_ROUTES : registers
+RUN_PY --> ASSET_ROUTES : registers
+RUN_PY --> PORTFOLIO_ROUTES : registers
+RUN_PY --> PROFIT_ROUTES : registers
+
+USER_ROUTES --> USER_MODEL : uses
+ASSET_ROUTES --> ASSET_MODEL : uses
+PORTFOLIO_ROUTES --> PORTFOLIO_MODEL : uses
+PROFIT_ROUTES --> SQL_LOADER : uses
+
+SQL_LOADER --> TOTAL_PROFIT_SQL : loads
+SQL_LOADER --> PORTFOLIO_PROFIT_SQL : loads
+SQL_LOADER --> ASSET_ALLOCATION_SQL : loads
+SQL_LOADER --> PREV_PROFIT_SQL : loads
+
+' Database Connections
+DB_CONNECTION --> MYSQL : connects
+USER_MODEL --> USER_INFO_TABLE : queries
+ASSET_MODEL --> ASSETS_TABLE : queries
+PORTFOLIO_MODEL --> PORTFOLIO_TABLE : queries
+
+' Data Management
+DATA_INSERT --> ASSETS_TABLE : populates
+DATA_INSERT --> USER_INFO_TABLE : populates
+DATA_INSERT --> PORTFOLIO_TABLE : populates
+
+' API Communication
+API_SERVICE --> USER_ROUTES : calls
+API_SERVICE --> ASSET_ROUTES : calls
+API_SERVICE --> PORTFOLIO_ROUTES : calls
+API_SERVICE --> PROFIT_ROUTES : calls
+
+' Component Interactions
+MAIN_JS --> HOME_JS : initializes
+MAIN_JS --> TRADING_JS : initializes
+MAIN_JS --> PORTFOLIO_JS : initializes
+MAIN_JS --> STOCK_DETAIL_JS : initializes
+MAIN_JS --> MODAL_HANDLERS : initializes
+
+HOME_JS --> API_SERVICE : uses
+TRADING_JS --> API_SERVICE : uses
+PORTFOLIO_JS --> API_SERVICE : uses
+STOCK_DETAIL_JS --> API_SERVICE : uses
+
+' Backend Framework
+RUN_PY --> FLASK : uses
+
+note right of INDEX
+  Single Page Application (SPA)
+  with dynamic component loading
+end note
+
+note right of API_SERVICE
+  Centralized API client
+  handles all backend communication
+end note
+
+note right of ASSETS_TABLE
+  Stores stock/cash/bond data
+  with historical price information
+end note
+
+note right of PORTFOLIO_TABLE
+  Tracks user holdings
+  across different portfolios
+end note
+
+note right of USER_INFO_TABLE
+  Stores user account information
+  including available funds
+end note
+
+note right of RUN_PY
+  Flask application entry point
+  registers all routes and starts server
+end note
+
+@enduml 
